@@ -136,7 +136,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 
 	@Override
 	public String getContext() {
-		return "obter classe processual";
+		return "obter documento";
 	}
 
 	/**

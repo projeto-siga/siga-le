@@ -123,7 +123,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
 	@Override
 	public String getContext() {
-		return "obter classe processual";
+		return "tramitar documento";
 	}
 
 	/**

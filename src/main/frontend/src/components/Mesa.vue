@@ -42,11 +42,11 @@
             <tbody>
             <template v-for="f in filtrados">
 							<tr v-if="f.grupoExibir" class="table-group">
-								<th colspan="6" class="pt-3">
+								<th colspan="6" class="pt-5 pb-0 pl-0">
 									<h4 class="mb-1">{{f.grupoNome}}</h4>
 								</th>
 							</tr>
-							<tr v-if="f.grupoExibir" class="table-head thead-inverse">
+							<tr v-if="f.grupoExibir" class="table-head">
               <th style="text-align: center">
                 <input type="checkbox" id="progress_checkall" name="progress_checkall" v-model="todos" @change="marcarTodos()"></input>
               </th>

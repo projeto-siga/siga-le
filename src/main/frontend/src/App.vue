@@ -21,9 +21,6 @@
                   <router-link class="nav-link" active-class="active" :to="{name:'Mesa'}" tag="a">Mesa</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link class="nav-link" active-class="active" :to="{name:'Consulta Simples'}" tag="a" exact>Consulta</router-link>
-                </li>
-                <li class="nav-item">
                   <router-link class="nav-link" active-class="active" :to="{name:'Sugestões'}" tag="a">Sugestões</router-link>
                 </li>
                 <li class="nav-item">

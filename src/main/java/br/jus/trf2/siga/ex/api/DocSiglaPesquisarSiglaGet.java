@@ -29,6 +29,6 @@ public class DocSiglaPesquisarSiglaGet implements IDocSiglaPesquisarSiglaGet {
 
 	@Override
 	public String getContext() {
-		return "pesquisando mobil por sigla";
+		return "pesquisar mobil por sigla";
 	}
 }

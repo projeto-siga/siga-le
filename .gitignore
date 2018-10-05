@@ -20,3 +20,8 @@ hs_err_pid*
 #compiled frontend
 /src/main/webapp/index.html
 /src/main/webapp/static/
+/target/
+/target/
+/target/
+/target/
+/target/

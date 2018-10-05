@@ -73,7 +73,6 @@
                     <div class="card-deck">
                         <div class="card card-consulta-processual mb-3">
                             <div class="card-body">
-                                <img id="logo-header" class="float-right" src="../assets/users.png" height="64"></img>
                                 <p class="card-text">
                                 <div v-html="doc.conteudoBlobHtmlString"></div>
                                 </p>
@@ -160,7 +159,7 @@
                 <!-- DETALHES -->
                 <div class="card text-white bg-info">
                     <div class="card-header">Documento {{doc.exTipoDocumentoDescricao}}</div>
-                    <div class="card-body">
+                    <div class="card-body" style="font-size: 70%;">
                         <p>
                             <b>Suporte:</b> {{doc.fisicoOuEletronico}}
                         </p>
@@ -194,8 +193,8 @@
                             <b>Classificação:</b> {{doc.classificacaoDescricaoCompleta}}
                         </p>
                         <div v-if="doc.dadosComplementares">{{doc.dadosComplementares}}</div>
-                        <div v-if="doc.cossignatarios">
-                            <h3>Cossignatários</h3>
+                        <div v-if="false &amp;&amp; doc.cossignatarios">
+                            <h6>Cossignatários</h6>
                             <ul>
                                 <li v-for="cossig in doc.cossignatarios">{{cossig.key.subscritor.nomePessoa}}</li>
                             </ul>
@@ -220,7 +219,7 @@
                             </c:if>
                             -->
                         <div>
-                            <h3>Nível de Acesso</h3>
+                            <h6>Nível de Acesso</h6>
                             <p>
                                 <b>{{doc.nmNivelAcesso}}</b>
                                 <div v-if="doc.listaDeAcessos">
@@ -244,10 +243,6 @@
 <script>
 import ProcessoBL from '../bl/processo.js'
 import UtilsBL from '../bl/utils.js'
-import ProcessoPecaDetalhes from './ProcessoPecaDetalhes'
-import ProcessoNotas from './ProcessoNotas'
-import CnjClasseBL from '../bl/cnj-classe.js'
-import CnjAssuntoBL from '../bl/cnj-assunto.js'
 import { Bus } from '../bl/bus.js'
 
 export default {
@@ -256,8 +251,9 @@ export default {
     this.$on('filtrar', texto => {
       this.filtrarMovimentos(texto)
     })
-
-    this.carregarDocumento(this.$route.params.numero)
+    this.$nextTick(function () {
+      this.carregarDocumento(this.$route.params.numero)
+    })
   },
   data() {
     return {
@@ -384,43 +380,6 @@ export default {
             UtilsBL.errormsg(error, this)
           }
         )
-    },
-    getDescriptions: function() {
-      var db = this.proc.dadosBasicos
-
-      // Carregar a classe
-      this.$set(
-        this.fixed,
-        'classeProcessualDescricao',
-        CnjClasseBL.nome(db.classeProcessual)
-      )
-      this.$set(
-        this.fixed,
-        'classeProcessualDescricaoCompleta',
-        CnjClasseBL.nomeCompleto(db.classeProcessual)
-      )
-
-      // Carregar assuntos (partimos do princípio que sempre
-      // há um assunto principal e que sempre é o primeiro)
-      if (
-        db.assunto &&
-        db.assunto.length > 0 &&
-        Number(db.assunto[0].codigoNacional) > 0
-      ) {
-        for (var i = 0; i < db.assunto.length; i++) {
-          var ass = db.assunto[i]
-          ass.descricao = CnjAssuntoBL.nome(ass.codigoNacional)
-          ass.descricaoCompleta = CnjAssuntoBL.nomeCompleto(ass.codigoNacional)
-          if (ass.principal) {
-            this.$set(this.fixed, 'assuntoPrincipalDescricao', ass.descricao)
-            this.$set(
-              this.fixed,
-              'assuntoPrincipalDescricaoCompleta',
-              ass.descricaoCompleta
-            )
-          }
-        }
-      }
     },
     mostrarTexto: function(doc, f) {
       ProcessoBL.mostrarTexto(this.fixed.movdoc, doc, f)
@@ -682,8 +641,6 @@ export default {
   },
 
   components: {
-    'processo-peca-detalhes': ProcessoPecaDetalhes,
-    'processo-notas': ProcessoNotas
   }
 }
 </script>

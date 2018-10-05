@@ -115,7 +115,7 @@ public class DocSiglaAssinarComSenhaPost implements
 
 	@Override
 	public String getContext() {
-		return "obter classe processual";
+		return "registrar assinatura com senha";
 	}
 
 	/**
