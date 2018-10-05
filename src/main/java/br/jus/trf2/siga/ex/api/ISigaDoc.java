@@ -245,6 +245,21 @@ public interface ISigaDoc {
 				DocSiglaTramitarPostResponse resp) throws Exception;
 	}
 
+	public class DocSiglaPesquisarSiglaGetRequest implements ISwaggerRequest {
+		public String sigla;
+		public String matricula;
+	}
+
+	public class DocSiglaPesquisarSiglaGetResponse implements ISwaggerResponse {
+		public String codigo;
+		public String sigla;
+	}
+
+	public interface IDocSiglaPesquisarSiglaGet extends ISwaggerMethod {
+		public void run(DocSiglaPesquisarSiglaGetRequest req,
+				DocSiglaPesquisarSiglaGetResponse resp) throws Exception;
+	}
+
 	public class SugestaoPostRequest implements ISwaggerRequest {
 		public String nome;
 		public String email;

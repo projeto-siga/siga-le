@@ -73,6 +73,12 @@ parameters:
     description: Sigla completa da matrícula
     required: false
     type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
   id:
     name: id
     in: path
@@ -275,6 +281,29 @@ paths:
             type: object
             properties:
               status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/pesquisar-sigla:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matriculaQuery"
+      description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              codigo:
+                type: string
+              sigla:
                 type: string
         500:
           description: Error ocurred

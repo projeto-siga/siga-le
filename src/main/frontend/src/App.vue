@@ -54,8 +54,8 @@
                 </li>
               </ul>
               <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Sigla" aria-label="Sigla">
-                <button class="btn my-2 my-sm-0" type="submit">Buscar</button>
+                <input class="form-control mr-sm-2" type="search" placeholder="Sigla" aria-label="Sigla" v-model="siglaParaPesquisar">
+                <button class="btn my-2 my-sm-0" type="submit" @click="pesquisar">Buscar</button>
               </form>
 
             </div>
@@ -106,7 +106,7 @@ export default {
     Bus.$on('block', (min, max) => {
       if (this.blockCounter === 0) {
         this.$nextTick(function () {
-          if (this.blockCounter > 0) {
+          if (this.blockCounter > 0 && this.$refs.topProgress) {
             this.$refs.topProgress.start(min, max)
           }
         }, 200)
@@ -120,7 +120,7 @@ export default {
       if (this.blockCounter === 0) {
         this.loading = false
         this.$nextTick(function () {
-          if (this.blockCounter === 0) {
+          if (this.blockCounter === 0 && this.$refs.topProgress) {
             this.$refs.topProgress.done()
           }
         }, 200)
@@ -209,6 +209,7 @@ export default {
       loading: false,
       test: { properties: {} },
       errormsg: undefined,
+      siglaParaPesquisar: undefined,
       settings: {
         timeline: undefined,
         timelineIncompatible: undefined,
@@ -231,6 +232,15 @@ export default {
       AuthBL.logout()
       this.jwt = {}
       this.$router.push({ name: 'Login' })
+    },
+
+    pesquisar: function () {
+      this.$http.get('doc/' + this.siglaParaPesquisar + '/pesquisar-sigla', { block: true }).then(response => {
+        if (response.data.codigo) {
+          this.$router.push({ name: 'Processo', params: { numero: response.data.codigo } })
+        }
+      }, error => UtilsBL.errormsg(error, this))
+      this.siglaParaPesquisar = undefined
     },
 
     assinarComSenha: function (d, username, password, lote) {

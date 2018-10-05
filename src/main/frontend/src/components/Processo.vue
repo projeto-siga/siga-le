@@ -257,28 +257,13 @@ export default {
       this.filtrarMovimentos(texto)
     })
 
-    // Validar o número do processo
-    this.$nextTick(function() {
-      Bus.$emit('block', 20)
-      this.$http.get('doc/' + this.numero).then(
-        response => {
-          Bus.$emit('release')
-          this.doc = response.data
-          this.mob = this.doc.mobs[0]
-          console.log(this.doc)
-        },
-        error => {
-          Bus.$emit('release')
-          UtilsBL.errormsg(error, this)
-        }
-      )
-    })
+    this.carregarDocumento(this.$route.params.numero)
   },
   data() {
     return {
       fixed: undefined,
       modified: undefined,
-      numero: this.$route.params.numero,
+      numero: undefined,
       orgao: undefined,
       perfil: undefined,
       gui: {},
@@ -302,7 +287,30 @@ export default {
       return a
     }
   },
+  watch: {
+    '$route.params.numero': function (id) {
+      this.carregarDocumento(this.$route.params.numero)
+    }
+  },
   methods: {
+    carregarDocumento: function() {
+      this.numero = this.$route.params.numero
+      // Validar o número do processo
+      Bus.$emit('block', 20)
+      this.$http.get('doc/' + this.numero).then(
+        response => {
+          Bus.$emit('release')
+          this.doc = response.data
+          this.mob = this.doc.mobs[0]
+          console.log(this.doc)
+        },
+        error => {
+          Bus.$emit('release')
+          UtilsBL.errormsg(error, this)
+        }
+      )
+    },
+
     assinarComSenha: function() {
       Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
     },
