@@ -241,7 +241,6 @@
 </template>
 
 <script>
-import ProcessoBL from '../bl/processo.js'
 import UtilsBL from '../bl/utils.js'
 import { Bus } from '../bl/bus.js'
 
@@ -273,14 +272,6 @@ export default {
       marcadores: [],
       marcasativas: true,
       notas: false
-    }
-  },
-  computed: {
-    filtrados: function() {
-      // Referência à this.modified é necessária para recalcular quando mostra o texto
-      console.log('recalculando filtrados...', this.modified)
-      var a = ProcessoBL.filtrar(this.fixed.movdoc, this.filtro)
-      return a
     }
   },
   watch: {
@@ -380,10 +371,6 @@ export default {
             UtilsBL.errormsg(error, this)
           }
         )
-    },
-    mostrarTexto: function(doc, f) {
-      ProcessoBL.mostrarTexto(this.fixed.movdoc, doc, f)
-      this.modified = new Date()
     },
     mostrarDadosComplementares: function(ativo) {
       this.$parent.$emit('setting', 'mostrarDadosComplementares', ativo)

@@ -61,7 +61,7 @@
                 <input type="checkbox" v-model="f.checked" :disabled="f.disabled"></input>
               </td>
 								<td :title="f.datahora">{{f.tempoRelativo}}</td>
-								<td><router-link :to="{name: 'Processo', params: {numero: f.codigo}}">{{f.sigla}}</router-link></td>
+								<td><router-link :to="{name: 'Documento', params: {numero: f.codigo}}">{{f.sigla}}</router-link></td>
 								<td>{{f.descr}}</td>
 								<td>{{f.origem}}</td>
 								<td style="padding: 0;"><div  class="xrp-label-container">
@@ -86,7 +86,6 @@
 <script>
 import { Bus } from '../bl/bus.js'
 import UtilsBL from '../bl/utils.js'
-import ProcessoBL from '../bl/processo.js'
 // import { Bus } from '../bl/bus.js'
 
 export default {
@@ -173,9 +172,6 @@ export default {
         errormsg: undefined,
         odd: undefined
       })
-      if (item.processo !== undefined) {
-        item.processoFormatado = ProcessoBL.formatarProcesso(item.processo)
-      }
       if (item.datahora !== undefined) {
         item.datahoraFormatada = UtilsBL.formatJSDDMMYYYYHHMM(item.datahora)
       }

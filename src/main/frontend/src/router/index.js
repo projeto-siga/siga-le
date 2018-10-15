@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Processo from '@/components/Processo'
+import Documento from '@/components/Documento'
 import Mesa from '@/components/Mesa'
 import Login from '@/components/Login'
 import Sugestoes from '@/components/Sugestoes'
 import Sobre from '@/components/Sobre'
-import ProcessoBL from '../bl/processo.js'
 
 Vue.use(Router)
 
@@ -16,18 +15,12 @@ export default new Router({
     component: Login
   },
   {
-    path: '/processo/:numero',
-    name: 'Processo',
-    component: Processo,
+    path: '/documento/:numero',
+    name: 'Documento',
+    component: Documento,
     meta: {
       title: route => {
-        return (
-          'Processo ' +
-          ProcessoBL.formatarProcesso(
-            ProcessoBL.somenteNumeros(route.params.numero)
-          ) +
-          '..'
-        )
+        return 'Documento ' + route.params.numero + '..'
       }
     }
   },
