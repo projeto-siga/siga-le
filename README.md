@@ -31,8 +31,15 @@ Utiliza JWT como mecanismo de autenticação e autorização, portanto é necess
 Siga-Le utiliza as mesmas propriedades para envio de email que o Siga-Doc, no entanto, algumas outras são necessárias para configurar o email de sugestão:
 
 ```xml
-<property name="siga.sugestao.smtp.destinatario" value="equipe_responsavel@trf2.jus.br"/>
-<property name="siga.sugestao.smtp.assunto" value="Siga-Le: Sugestão"/>
+<property name="siga.ex.api.smtp.remetente" value="balcaovirtual@trf2.jus.br"/>
+<property name="siga.ex.api.smtp.host" value="smtp.trf2.jus.br"/>
+<property name="siga.ex.api.smtp.host.alt" value="smtp2.trf2.jus.br"/>
+<property name="siga.ex.api.smtp.auth" value="true"/>
+<property name="siga.ex.api.smtp.auth.usuario" value="intelijus"/>
+<property name="siga.ex.api.smtp.auth.senha" value="senha_secreta"/>
+<property name="siga.ex.api.smtp.porta" value="25"/>
+<property name="siga.ex.api.smtp.destinatario" value="equipe_responsavel@trf2.jus.br"/>
+<property name="siga.ex.api.smtp.assunto" value="Siga-Le: Sugestão"/>
 ```
 
 A barra de títulos do Siga-Le assume cores diferenciadas nos ambientes de produção, homologação e desenvolvimento. A configuração abaixo deve ser utilizada no ambiente de produção. Em homologação usar "homolo" e em desenvolvimento, "desenv".
