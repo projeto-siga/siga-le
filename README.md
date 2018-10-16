@@ -28,7 +28,7 @@ Utiliza JWT como mecanismo de autenticação e autorização, portanto é necess
 <property name="siga.ex.api.jwt.secret" value="***GUID***"/>
  ```
  
-Siga-Le utiliza as mesmas propriedades para envio de email que o Siga-Doc, no entanto, algumas outras são necessárias para configurar o email de sugestão:
+Precisa que algumas propriedades sejam configuradas para que possa enviar o email de sugestão:
 
 ```xml
 <property name="siga.ex.api.smtp.remetente" value="balcaovirtual@trf2.jus.br"/>
