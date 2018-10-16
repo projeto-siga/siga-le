@@ -27,6 +27,13 @@ Utiliza JWT como mecanismo de autenticação e autorização, portanto é necess
 ```xml
 <property name="siga.ex.api.jwt.secret" value="***GUID***"/>
  ```
+ 
+Siga-Le utiliza as mesmas propriedades para envio de email que o Siga-Doc, no entanto, algumas outras são necessárias para configurar o email de sugestão:
+
+```xml
+<property name="siga.sugestao.smtp.destinatario" value="equipe_responsavel@trf2.jus.br"/>
+<property name="siga.sugestao.smtp.assunto" value="Siga-Le: Sugestão"/>
+```
 
 A barra de títulos do Siga-Le assume cores diferenciadas nos ambientes de produção, homologação e desenvolvimento. A configuração abaixo deve ser utilizada no ambiente de produção. Em homologação usar "homolo" e em desenvolvimento, "desenv".
 
