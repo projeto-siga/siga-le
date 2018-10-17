@@ -58,7 +58,7 @@ public class Correio {
 			String nomeArquivo, String tipoArquivo, byte[] conteudoArquivo) throws Exception {
 		final String[] to = { destinatario };
 
-		Correio.enviar(SwaggerUtils.getRequiredProperty("balcaovirtual.smtp.remetente",
+		Correio.enviar(SwaggerUtils.getRequiredProperty("siga.ex.api.smtp.remetente",
 				"remetente de email não configurado.", false), to, assunto, conteudo, null, nomeArquivo, tipoArquivo,
 				conteudoArquivo);
 	}
@@ -69,8 +69,8 @@ public class Correio {
 
 		List<String> listaServidoresEmail = new ArrayList<String>();
 		listaServidoresEmail.add(
-				SwaggerUtils.getRequiredProperty("balcaovirtual.smtp.host", "Host de SMTP não configurado.", false));
-		String host2 = SwaggerUtils.getProperty("balcaovirtual.smtp.host.alt", null);
+				SwaggerUtils.getRequiredProperty("siga.ex.api.smtp.host", "Host de SMTP não configurado.", false));
+		String host2 = SwaggerUtils.getProperty("siga.ex.api.smtp.host.alt", null);
 		if (host2 != null)
 			listaServidoresEmail.add(host2);
 
@@ -111,11 +111,11 @@ public class Correio {
 		// mostra os passos do envio da mensagem e o
 		// recebimento da mensagem do servidor no console.
 		Session session = null;
-		if (Boolean.valueOf(SwaggerUtils.getProperty("balcaovirtual.smtp.auth", "false"))) {
+		if (Boolean.valueOf(SwaggerUtils.getProperty("siga.ex.api.smtp.auth", "false"))) {
 			props.put("mail.smtp.auth", "true");
-			final String usuario = SwaggerUtils.getRequiredProperty("balcaovirtual.smtp.auth.usuario",
+			final String usuario = SwaggerUtils.getRequiredProperty("siga.ex.api.smtp.auth.usuario",
 					"Usuário do SMTP não informado.", false);
-			final String senha = SwaggerUtils.getRequiredProperty("balcaovirtual.smtp.auth.senha",
+			final String senha = SwaggerUtils.getRequiredProperty("siga.ex.api.smtp.auth.senha",
 					"Senha do SMTP não informada.", false);
 			session = Session.getInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
@@ -198,7 +198,7 @@ public class Correio {
 		// Transport.send(msg);
 
 		Transport tr = new SMTPTransport(session, null);
-		tr.connect(servidorEmail, Integer.valueOf(SwaggerUtils.getProperty("balcaovirtual.smtp.porta", "25")), null,
+		tr.connect(servidorEmail, Integer.valueOf(SwaggerUtils.getProperty("siga.ex.api.smtp.porta", "25")), null,
 				null);
 		msg.saveChanges(); // don't forget this
 		tr.sendMessage(msg, msg.getAllRecipients());

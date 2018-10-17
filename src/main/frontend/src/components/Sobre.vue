@@ -8,7 +8,7 @@
   
         <p>O Siga-Le é uma versão mais leve do Siga-Doc, criada especialmente para o uso em celulares e outros dispositivos móveis.</p>
   
-        <div class="headline pb-1">
+        <div class="headline pb-1 pt-3">
           <h2>Como faço para usar?</h2>
         </div>
   
@@ -20,13 +20,7 @@
         </p>
   
         <div class="headline pb-1 pt-3">
-          <h2>A Linha do Tempo</h2>
-        </div>
-        <p>
-          <strong>Linha do Tempo do Processo</strong> é um diagrama que resume as ocorrências observadas em um processo judicial. Situações que ainda não ocorreram permanecem em cinza. Eventos detectados no histórico de movimentos são apresentados como círculos pretos e o caminho até eles é marcado de azul. Quando um mesmo evento ocorre mais de uma vez, o número total de ocorrências é apresentado dentro do respectivo círculo. O último evento detectado é marcado com um círculo laranja e ao seu lado podem ser apresentados alguns detalhes referentes, apenas, a esta última ocorrência.
-        </p>
-        <div class="headline pb-1 pt-3">
-          <h2>Sobre o Balcão Virtual</h2>
+          <h2>Sobre o Siga-Le</h2>
         </div>
   
         <p>O Siga-Le foi desenvolvido em 2018 pela Coordenadoria de Sistemas Administrativos (COSADM), parte da Secretaria de Tecnologia da Informação do Tribunal Regional Federal da 2ª Região.</p>

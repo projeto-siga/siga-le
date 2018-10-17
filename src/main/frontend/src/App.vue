@@ -6,7 +6,7 @@
         <div class="header d-print-none">
           <!-- Navbar -->
           <nav class="navbar navbar navbar-expand-lg navbar-light" :class="{'navbar-dark bg-success': test.properties['siga.ex.api.env'] === 'desenv', 'navbar-dark bg-secondary': test.properties['siga.ex.api.env'] === 'homolo', 'navbar-dark bg-primary': test.properties['siga.ex.api.env'] === 'prod'}">
-            <a class="navbar-brand pt-0 pb-0" href="#">
+            <a class="navbar-brand pt-0 pb-0" href="#/mesa">
               <img id="logo-header" src="./assets/logo-siga-novo-38px.png" alt="Siga-Le" height="38"></img>
               <img class="ml-2" id="logo-header2" src="./assets/trf2-38px-2.png" alt="Logo TRF2" height="38"></img>
             </a>
@@ -74,12 +74,14 @@
     </div>
     <assinatura ref="assinatura" title="Assinatura"></assinatura>
     <tramite ref="tramite" title="Trâmite"></tramite>
+    <anotacao ref="anotacao" title="Anotação"></anotacao>
   </div>
 </template>
 
 <script>
 import Assinatura from './components/Assinatura'
 import Tramite from './components/Tramite'
+import Anotacao from './components/Anotacao'
 import AuthBL from './bl/auth.js'
 import UtilsBL from './bl/utils.js'
 import topProgress from './components/TopProgress'
@@ -170,8 +172,16 @@ export default {
       this.$refs.tramite.show(documentos, cont)
     })
 
+    Bus.$on('iniciarAnotacao', (documentos, cont) => {
+      this.$refs.anotacao.show(documentos, cont)
+    })
+
     Bus.$on('tramitar', (documentos, lotacao, matricula, cont) => {
       this.tramitarEmLote(documentos, lotacao, matricula, cont)
+    })
+
+    Bus.$on('anotar', (documentos, anotacao, cont) => {
+      this.anotarEmLote(documentos, anotacao, cont)
     })
 
     this.token = AuthBL.getIdToken()
@@ -232,9 +242,10 @@ export default {
     },
 
     pesquisar: function () {
-      this.$http.get('doc/' + this.siglaParaPesquisar + '/pesquisar-sigla', { block: true }).then(response => {
+      var pesq = (this.siglaParaPesquisar || '').replace(/[^a-z0-9]/gi, '')
+      this.$http.get('doc/' + pesq + '/pesquisar-sigla', { block: true }).then(response => {
         if (response.data.codigo) {
-          this.$router.push({ name: 'Processo', params: { numero: response.data.codigo } })
+          this.$router.push({ name: 'Documento', params: { numero: response.data.codigo } })
         }
       }, error => UtilsBL.errormsg(error, this))
       this.siglaParaPesquisar = undefined
@@ -278,6 +289,25 @@ export default {
 
     tramitarEmLote: function (documentos, lotacao, matricula, cont) {
       Bus.$emit('prgStart', 'Tramitando', documentos.length, (i) => this.tramitar(documentos[i], lotacao, matricula, true), cont)
+    },
+
+    anotarEmLote: function (documentos, anotacao, cont) {
+      Bus.$emit('prgStart', 'Anotando', documentos.length, (i) => this.anotar(documentos[i], anotacao, true), cont)
+    },
+
+    anotar: function (d, anotacao, lote) {
+      this.errormsg = undefined
+      if (lote) Bus.$emit('prgCaption', 'Anotando ' + d.sigla)
+
+      this.$http.post('doc/' + d.codigo + '/anotar', {
+        anotacao: anotacao
+      }, { block: !lote }).then(response => {
+        UtilsBL.logEvento('anotacao em lote', 'anotado')
+        if (lote) Bus.$emit('prgNext')
+      }, error => {
+        d.errormsg = error.data.errormsg
+        if (lote) Bus.$emit('prgNext')
+      })
     }
 
   },
@@ -286,7 +316,8 @@ export default {
     'progressModal': ProgressModal,
     messageBox: MessageBox,
     'assinatura': Assinatura,
-    'tramite': Tramite
+    'tramite': Tramite,
+    'anotacao': Anotacao
   }
 }
 </script>

@@ -21,9 +21,17 @@
         </div>
       </div>
       <div class="col col-auto ml-auto">
+        <button type="button" @click="anotarEmLote()" class="btn btn-primary" title="">
+          <span class="fa fa-sticky-note-o"></span> Anotar&nbsp;&nbsp;
+          <span class="badge badge-pill badge-warning">{{filtradosEMarcados.length}}</span>
+        </button>
         <button type="button" @click="assinarComSenhaEmLote()" class="btn btn-primary" title="">
-          <span class="fa fa-certificate"></span> Assinar&nbsp;&nbsp
+          <span class="fa fa-shield"></span> Assinar&nbsp;&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosEAssinaveis.length}}</span>
+        </button>
+        <button type="button" @click="tramitarEmLote()" class="btn btn-primary" title="">
+          <span class="fa fa-paper-plane-o"></span> Tramitar&nbsp;&nbsp;
+          <span class="badge badge-pill badge-warning">{{filtradosEMarcadosETramitaveis.length}}</span>
         </button>
       </div>
     </div>
@@ -138,6 +146,12 @@ export default {
       return this.filtradosEMarcados.filter(function(item) {
         return item.grupo === 'A_ASSINAR'
       })
+    },
+
+    filtradosEMarcadosETramitaveis: function() {
+      return this.filtradosEMarcados.filter(function(item) {
+        return item.grupo === 'AGUARDANDO_ANDAMENTO'
+      })
     }
   },
 
@@ -181,6 +195,16 @@ export default {
     assinarComSenhaEmLote: function() {
       var a = this.filtradosEMarcadosEAssinaveis
       Bus.$emit('iniciarAssinaturaComSenha', a, this.carregarMesa)
+    },
+
+    anotarEmLote: function() {
+      var a = this.filtradosEMarcados
+      Bus.$emit('iniciarAnotacao', a)
+    },
+
+    tramitarEmLote: function() {
+      var a = this.filtradosEMarcadosETramitaveis
+      Bus.$emit('iniciarTramite', a, this.carregarMesa)
     },
 
     marcarTodos: function() {

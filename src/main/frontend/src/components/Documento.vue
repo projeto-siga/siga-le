@@ -24,24 +24,6 @@
                 </div>
             </div>
             <div class="row no-gutters mt-2">
-                <div class="col col-auto mr-1" v-if="doc.podeAssinar">
-                    <button type="button" @click="assinarComSenha()" class="btn btn-primary d-print-none">
-                    <span class="fa fa-shield"></span>
-                    Assinar
-                    </button>
-                </div>
-                <div class="col col-auto mr-1 mb-3" v-if="mob.podeTramitar">
-                    <button type="button" @click="tramitar()" class="btn btn-primary d-print-none">
-                    <span class="fa fa-papar-plane-o"></span>
-                    Tramitar
-                    </button>
-                </div>
-                <div class="col col-auto mr-1 mb-3">
-                    <button type="button" @click="anotar()" class="btn btn-primary d-print-none">
-                    <span class="fa fa-sticky-note-o"></span>
-                    Anotar
-                    </button>
-                </div>
                 <!--
                     <div class="col col-auto mr-1" v-if="!$parent.settings.filtrarMovimentos">
                       <button type="button" @click="filtrarMovimentos('')" class="btn btn-secondary d-print-none">
@@ -56,10 +38,28 @@
                       </button>
                     </div>
                     -->
-                <div class="col col-auto ml-auto mb-3">
+                <div class="col col-auto mb-3">
                     <button type="button" @click="mostrarCompleto()" id="download" class="btn btn-info d-print-none">
                     <span class="fa fa-download"></span>
                     PDF
+                    </button>
+                </div>
+                <div class="col col-auto ml-auto mr-1 mb-3">
+                    <button type="button" @click="anotar()" class="btn btn-primary d-print-none">
+                    <span class="fa fa-sticky-note-o"></span>
+                    Anotar
+                    </button>
+                </div>
+                <div class="col col-auto ml-1 mb-3" v-if="doc.podeAssinar">
+                    <button type="button" @click="assinarComSenha()" class="btn btn-primary d-print-none">
+                    <span class="fa fa-shield"></span>
+                    Assinar
+                    </button>
+                </div>
+                <div class="col col-auto ml-1 mb-3" v-if="mob.podeTramitar">
+                    <button type="button" @click="tramitar()" class="btn btn-primary d-print-none">
+                    <span class="fa fa-paper-plane-o"></span>
+                    Tramitar
                     </button>
                 </div>
                 <div class="col col-auto ml-1 mb-3" v-if="$parent.test.properties['siga-le.ws.documental.url'] &amp;&amp; $parent.test.properties['siga-le.env'] !== 'prod' || (perfil === 'procurador' &amp;&amp; $parent.jwt.company === 'pgfn.gov.br')">
@@ -96,6 +96,8 @@
                             <td>{{mov.exTipoMovimentacaoSigla}}</td>
                             <td style="padding: 5px 5px; word-break: break-all;">{{mov.descricao}}
                                 <span v-if="mov.idTpMov != 2">{{mov.complemento}}</span>
+                                <span v-if="mov.descricao &amp;&amp; mov.acoes &amp;&amp; mov.acoes.length !== 0">|</span>
+                                <span v-for="acao in mov.acoes">{{acao.pre}} <a v-if="acao.acao" href="" @click.prevent="executar(mov, acao)">{{acao.nome}}</a><span v-if="!acao.acao">{{acao.nome}}</span> {{acao.pos}}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -280,6 +282,12 @@ export default {
     }
   },
   methods: {
+    executar: function(mov, acao) {
+      if (acao.acao === 'exibir') {
+        this.$router.push({ name: 'Documento', params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, '') } })
+      }
+    },
+
     carregarDocumento: function() {
       this.numero = this.$route.params.numero
       // Validar o número do processo
@@ -304,6 +312,10 @@ export default {
 
     tramitar: function() {
       Bus.$emit('iniciarTramite', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
+    },
+
+    anotar: function() {
+      Bus.$emit('iniciarAnotacao', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
     },
 
     reler: function() {

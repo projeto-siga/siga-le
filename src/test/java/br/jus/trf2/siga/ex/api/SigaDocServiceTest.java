@@ -1,10 +1,8 @@
-package br.jus.trf2.balcaovirtual;
+package br.jus.trf2.siga.ex.api;
 
 import com.crivano.swaggerservlet.SwaggerTestSupport;
 
-import br.jus.trf2.siga.ex.api.SigaDocServlet;
-
-public class BalcaoVirtualServiceTest extends SwaggerTestSupport {
+public class SigaDocServiceTest extends SwaggerTestSupport {
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -15,7 +13,7 @@ public class BalcaoVirtualServiceTest extends SwaggerTestSupport {
 	@Override
 	protected String getPackage() {
 		// TODO Auto-generated method stub
-		return "br.jus.trf2.balcaovirtual";
+		return "br.jus.trf2.siga.ex.api";
 	}
 
 	public void testNothing_Simple_Success() {

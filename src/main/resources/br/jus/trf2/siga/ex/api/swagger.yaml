@@ -61,6 +61,12 @@ parameters:
     description: Número do documentos sem traços ou barra
     required: true
     type: string
+  id:
+    name: id
+    in: path
+    description: Identificador da movimentação
+    required: true
+    type: string
   lotacao:
     name: lotacao
     in: formData
@@ -79,10 +85,10 @@ parameters:
     description: Sigla completa da matrícula
     required: false
     type: string
-  id:
-    name: id
+  anotacao:
+    name: anotacao
     in: path
-    description: Número da id só algarismos
+    description: Texto da anotação
     required: true
     type: string
   jwt:
@@ -251,7 +257,7 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/password"
-      description: Tramitar documento
+      description: Assinar documento com senha
       responses:
         200:
           description: Successful response
@@ -274,6 +280,27 @@ paths:
         - $ref: "#/parameters/lotacao"
         - $ref: "#/parameters/matricula"
       description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/anotar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/anotacao"
+      description: Anotar documento
       responses:
         200:
           description: Successful response

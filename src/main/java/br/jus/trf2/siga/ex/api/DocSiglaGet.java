@@ -52,7 +52,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 			ExMobil mob = db.consultarPorSigla(flt);
 			ExDocumento doc = mob.doc();
 
-			assertAcesso(mob, titular, lotaTitular);
+			Utils.assertAcesso(mob, titular, lotaTitular);
 
 			// Recebimento automático
 			if (Ex.getInstance().getComp()
@@ -90,48 +90,6 @@ public class DocSiglaGet implements IDocSiglaGet {
 			resp.contenttype = "application/json";
 		}
 
-	}
-
-	private void assertAcesso(final ExMobil mob, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
-		if (!Ex.getInstance().getComp()
-				.podeAcessarDocumento(titular, lotaTitular, mob)) {
-			String s = "";
-			s += mob.doc().getListaDeAcessosString();
-			s = "(" + s + ")";
-			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso()
-					+ " " + s;
-
-			Map<ExPapel, List<Object>> mapa = mob.doc().getPerfis();
-			boolean isInteressado = false;
-
-			for (ExPapel exPapel : mapa.keySet()) {
-				Iterator<Object> it = mapa.get(exPapel).iterator();
-
-				if ((exPapel != null)
-						&& (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
-					while (it.hasNext() && !isInteressado) {
-						Object item = it.next();
-						isInteressado = item.toString().equals(
-								titular.getSigla()) ? true : false;
-					}
-				}
-
-			}
-
-			if (mob.doc().isSemEfeito()) {
-				if (!mob.doc().getCadastrante().equals(titular)
-						&& !mob.doc().getSubscritor().equals(titular)
-						&& !isInteressado) {
-					throw new AplicacaoException("Documento " + mob.getSigla()
-							+ " cancelado ");
-				}
-			} else {
-				throw new AplicacaoException("Documento " + mob.getSigla()
-						+ " inacessível ao usuário " + titular.getSigla() + "/"
-						+ lotaTitular.getSiglaCompleta() + "." + s);
-			}
-		}
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="cota" ref="modal" v-model="showModal" title="Trâmite" hide-header-close>
+    <b-modal id="cota" ref="modal" v-model="showModal" title="Tramitar" hide-header-close>
       <form>
         <div class="row">
           <div class="form-group col col-sm-6">
