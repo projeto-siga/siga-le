@@ -1,6 +1,6 @@
 <template>
 <div class="hello">
-    <div class="container content profile">
+    <div class="container-fluid content profile">
         <div class="row pt-5" v-if="errormsg">
             <div class="col col-sm-12">
                 <p class="alert alert-danger">
@@ -69,173 +69,178 @@
                 </div>
             </div>
             <template v-if="doc">
-                <div class="d-print-none" v-if="errormsg === undefined">
-                    <div class="card-deck">
-                        <div class="card card-consulta-processual mb-3">
-                            <div class="card-body">
-                                <p class="card-text">
-                                <div v-html="doc.conteudoBlobHtmlString"></div>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <table class="table table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th>Tempo</th>
-                            <th>Lotação</th>
-                            <th>Evento</th>
-                            <th>Descrição</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-bind:class="[mov.classe, mov.disabled]" v-for="mov in mob.movs" v-if="mov.idTpMov != 14 &amp;&amp; !mov.cancelada">
-                            <td>{{mov.tempoRelativo}}</td>
-                            <td>{{mov.lotaCadastranteSigla}}</td>
-                            <td>{{mov.exTipoMovimentacaoSigla}}</td>
-                            <td style="padding: 5px 5px; word-break: break-all;">{{mov.descricao}}
-                                <span v-if="mov.idTpMov != 2">{{mov.complemento}}</span>
-                                <span v-if="mov.descricao &amp;&amp; mov.acoes &amp;&amp; mov.acoes.length !== 0">|</span>
-                                <span v-for="acao in mov.acoes">{{acao.pre}} <a v-if="acao.acao" href="" @click.prevent="executar(mov, acao)">{{acao.nome}}</a><span v-if="!acao.acao">{{acao.nome}}</span> {{acao.pos}}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- PENDENCIAS -->
-                <div class="card text-white bg-danger mb-3" v-if="mob.pendencias">
-                    <div class="card-header">Pendências</div>
-                    <div class="card-body">
-                        <div v-if="mob.pendenciasDeAnexacao">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Anexos Pendentes:</b>
-                            </p>
-                            <ul>
-                                <li v-for="anexoPendente in mob.pendenciasDeAnexacao">{{anexoPendente.descricao}}</li>
-                            </ul>
-                        </div>
-                        <div v-if="mob.anexosNaoAssinados">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Anexos não assinados:</b>
-                            </p>
-                            <ul>
-                                <li v-for="naoAssinado in mob.anexosNaoAssinados">{{naoAssinado.descricao}}</li>
-                            </ul>
-                        </div>
-                        <div v-if="mob.despachosNaoAssinados">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Despachos não assinados:</b>
-                            </p>
-                            <ul>
-                                <li v-for="naoAssinado in mob.despachosNaoAssinados">{{naoAssinado.descricao}}</li>
-                            </ul>
-                        </div>
-                        <div v-if="mob.expedientesJuntadosNaoAssinados">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Expedientes juntados não
-                                assinados:</b>
-                            </p>
-                            <ul>
-                                <li v-for="naoAssinado in mob.expedientesJuntadosNaoAssinados">{{naoAssinado.sigla}}</li>
-                            </ul>
-                        </div>
-                        <div v-if="mob.expedientesFilhosNaoJuntados">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Expedientes não juntados:</b>
-                            </p>
-                            <ul>
-                                <li v-for="naoJuntado in mob.expedientesFilhosNaoJuntados">{{naoJuntado.sigla}}</li>
-                            </ul>
-                        </div>
-                        <div v-if="mob.pendenciasDeColaboracao">
-                            <p>
-                                <b style="color: rgb(195, 0, 0)">Pendências de Colaboração:</b>
-                            </p>
-                            <ul>
-                                <li v-for="colaboracaoPendente in mob.pendenciasDeColaboracao">{{colaboracaoPendente.descricao}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- DETALHES -->
-                <div class="card text-white bg-info">
-                    <div class="card-header">Documento {{doc.exTipoDocumentoDescricao}}</div>
-                    <div class="card-body" style="font-size: 70%;">
-                        <p>
-                            <b>Suporte:</b> {{doc.fisicoOuEletronico}}
-                        </p>
-                        <p>
-                            <b>Data:</b> {{doc.dtDocDDMMYY}}
-                            <span v-if="doc.originalData"><b>original:</b> {{doc.originalData}}</span>
-                        </p>
-                        <p v-if="doc.originalNumero">
-                            <b>Número original:</b> {{doc.originalNumero}}
-                        </p>
-                        <p>
-                            <b>De:</b> {{doc.subscritorString}}
-                        </p>
-                        <p>
-                            <b>Para:</b> {{doc.destinatarioString}}
-                        </p>
-                        <p>
-                            <b>Cadastrante:</b> {{doc.cadastranteString}}
-                            {{doc.lotaCadastranteString}}
-                        </p>
-                        <p>
-                            <b>Espécie:</b> {{doc.forma}}
-                        </p>
-                        <p>
-                            <b>Modelo:</b> {{doc.modelo}}
-                        </p>
-                        <p id="descricao">
-                            <b>Descrição:</b> {{doc.descrDocumento}}
-                        </p>
-                        <p>
-                            <b>Classificação:</b> {{doc.classificacaoDescricaoCompleta}}
-                        </p>
-                        <div v-if="doc.dadosComplementares">{{doc.dadosComplementares}}</div>
-                        <div v-if="false &amp;&amp; doc.cossignatarios">
-                            <h6>Cossignatários</h6>
-                            <ul>
-                                <li v-for="cossig in doc.cossignatarios">{{cossig.key.subscritor.nomePessoa}}</li>
-                            </ul>
-                        </div>
-                        <!--
-                            <c:if test="{{not empty doc.doc.perfis}}">
-                              <div class="gt-sidebar-content" style="padding-top: 10px">
-                                <h3>Perfis</h3>
-                                <c:forEach var="perfil" items="{{doc.doc.perfis}}">
-                                  <p style="margin-bottom: 3px;">
-                                    <b>{{perfil.key.descPapel}}:</b>
+              <div class="row">
+                <div class="col col-sm-12 col-lg-8">                
+                  <div class="d-print-none" v-if="errormsg === undefined">
+                      <div class="card-deck">
+                          <div class="card card-consulta-processual mb-3">
+                              <div class="card-body">
+                                  <p class="card-text">
+                                  <div v-html="doc.conteudoBlobHtmlString"></div>
                                   </p>
-                                  <ul>
-                                    <c:forEach var="pessoaOuLota" items="{{perfil.value}}">
-                                      <li><c:catch var="exception">{{pessoaOuLota.nomePessoa}}</c:catch>
-                                        <c:if test="{{not empty exception}}">{{pessoaOuLota.nomeLotacao}}</c:if>
-                                      </li>
-                                    </c:forEach>
-                                  </ul>
-                                </c:forEach>
                               </div>
-                            </c:if>
-                            -->
-                        <div>
-                            <h6>Nível de Acesso</h6>
-                            <p>
-                                <b>{{doc.nmNivelAcesso}}</b>
-                                <div v-if="doc.listaDeAcessos">
-                                    <div v-if="doc.listaDeAcessos.length == 1">{{doc.listaDeAcessos[0] == 'PUBLICO' ? '(Público)' : acesso.sigla}}</div>
-                                    <div v-if="doc.listaDeAcessos.length > 1">
-                                        <ul>
-                                            <li v-for="acesso in doc.listaDeAcessos">{{acesso.sigla}}</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </p>
-                        </div>
-                    </div>
+                          </div>
+                      </div>
+                  </div>
+                  <table class="table table-sm table-striped">
+                      <thead>
+                          <tr>
+                              <th>Tempo</th>
+                              <th>Lotação</th>
+                              <th>Evento</th>
+                              <th>Descrição</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr v-bind:class="[mov.classe, mov.disabled]" v-for="mov in mob.movs" v-if="mov.idTpMov != 14 &amp;&amp; !mov.cancelada">
+                              <td>{{mov.tempoRelativo}}</td>
+                              <td>{{mov.lotaCadastranteSigla}}</td>
+                              <td>{{mov.exTipoMovimentacaoSigla}}</td>
+                              <td style="padding: 5px 5px; word-break: break-all;">{{mov.descricao}}
+                                  <span v-if="mov.idTpMov != 2">{{mov.complemento}}</span>
+                                  <span v-if="mov.descricao &amp;&amp; mov.acoes &amp;&amp; mov.acoes.length !== 0">|</span>
+                                  <span v-for="acao in mov.acoes">{{acao.pre}} <a v-if="acao.acao" href="" @click.prevent="executar(mov, acao)">{{acao.nome}}</a><span v-if="!acao.acao">{{acao.nome}}</span> {{acao.pos}}</span>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
                 </div>
+                <div class="col col-sm-12 col-lg-4">                
+                  <!-- PENDENCIAS -->
+                  <div class="card text-white bg-danger mb-3" v-if="mob.pendencias">
+                      <div class="card-header">Pendências</div>
+                      <div class="card-body">
+                          <div v-if="mob.pendenciasDeAnexacao">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Anexos Pendentes:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="anexoPendente in mob.pendenciasDeAnexacao">{{anexoPendente.descricao}}</li>
+                              </ul>
+                          </div>
+                          <div v-if="mob.anexosNaoAssinados">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Anexos não assinados:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="naoAssinado in mob.anexosNaoAssinados">{{naoAssinado.descricao}}</li>
+                              </ul>
+                          </div>
+                          <div v-if="mob.despachosNaoAssinados">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Despachos não assinados:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="naoAssinado in mob.despachosNaoAssinados">{{naoAssinado.descricao}}</li>
+                              </ul>
+                          </div>
+                          <div v-if="mob.expedientesJuntadosNaoAssinados">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Expedientes juntados não
+                                  assinados:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="naoAssinado in mob.expedientesJuntadosNaoAssinados">{{naoAssinado.sigla}}</li>
+                              </ul>
+                          </div>
+                          <div v-if="mob.expedientesFilhosNaoJuntados">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Expedientes não juntados:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="naoJuntado in mob.expedientesFilhosNaoJuntados">{{naoJuntado.sigla}}</li>
+                              </ul>
+                          </div>
+                          <div v-if="mob.pendenciasDeColaboracao">
+                              <p>
+                                  <b style="color: rgb(195, 0, 0)">Pendências de Colaboração:</b>
+                              </p>
+                              <ul>
+                                  <li v-for="colaboracaoPendente in mob.pendenciasDeColaboracao">{{colaboracaoPendente.descricao}}</li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- DETALHES -->
+                  <div class="card bg-light">
+                      <div class="card-header">Documento {{doc.exTipoDocumentoDescricao}}</div>
+                      <div class="card-body" style="font-size: 70%;">
+                          <p>
+                              <b>Suporte:</b> {{doc.fisicoOuEletronico}}
+                          </p>
+                          <p>
+                              <b>Data:</b> {{doc.dtDocDDMMYY}}
+                              <span v-if="doc.originalData"><b>original:</b> {{doc.originalData}}</span>
+                          </p>
+                          <p v-if="doc.originalNumero">
+                              <b>Número original:</b> {{doc.originalNumero}}
+                          </p>
+                          <p>
+                              <b>De:</b> {{doc.subscritorString}}
+                          </p>
+                          <p>
+                              <b>Para:</b> {{doc.destinatarioString}}
+                          </p>
+                          <p>
+                              <b>Cadastrante:</b> {{doc.cadastranteString}}
+                              {{doc.lotaCadastranteString}}
+                          </p>
+                          <p>
+                              <b>Espécie:</b> {{doc.forma}}
+                          </p>
+                          <p>
+                              <b>Modelo:</b> {{doc.modelo}}
+                          </p>
+                          <p id="descricao">
+                              <b>Descrição:</b> {{doc.descrDocumento}}
+                          </p>
+                          <p>
+                              <b>Classificação:</b> {{doc.classificacaoDescricaoCompleta}}
+                          </p>
+                          <div v-if="doc.dadosComplementares">{{doc.dadosComplementares}}</div>
+                          <div v-if="false &amp;&amp; doc.cossignatarios">
+                              <h6>Cossignatários</h6>
+                              <ul>
+                                  <li v-for="cossig in doc.cossignatarios">{{cossig.key.subscritor.nomePessoa}}</li>
+                              </ul>
+                          </div>
+                          <!--
+                              <c:if test="{{not empty doc.doc.perfis}}">
+                                <div class="gt-sidebar-content" style="padding-top: 10px">
+                                  <h3>Perfis</h3>
+                                  <c:forEach var="perfil" items="{{doc.doc.perfis}}">
+                                    <p style="margin-bottom: 3px;">
+                                      <b>{{perfil.key.descPapel}}:</b>
+                                    </p>
+                                    <ul>
+                                      <c:forEach var="pessoaOuLota" items="{{perfil.value}}">
+                                        <li><c:catch var="exception">{{pessoaOuLota.nomePessoa}}</c:catch>
+                                          <c:if test="{{not empty exception}}">{{pessoaOuLota.nomeLotacao}}</c:if>
+                                        </li>
+                                      </c:forEach>
+                                    </ul>
+                                  </c:forEach>
+                                </div>
+                              </c:if>
+                              -->
+                          <div>
+                              <h6>Nível de Acesso</h6>
+                              <p>
+                                  <b>{{doc.nmNivelAcesso}}</b>
+                                  <div v-if="doc.listaDeAcessos">
+                                      <div v-if="doc.listaDeAcessos.length == 1">{{doc.listaDeAcessos[0] == 'PUBLICO' ? '(Público)' : acesso.sigla}}</div>
+                                      <div v-if="doc.listaDeAcessos.length > 1">
+                                          <ul>
+                                              <li v-for="acesso in doc.listaDeAcessos">{{acesso.sigla}}</li>
+                                          </ul>
+                                      </div>
+                                  </div>
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
             </template>
         </div>
     </div>
@@ -423,7 +428,7 @@ export default {
     },
     mostrarCompleto: function() {
       this.$http
-        .get('processo/' + this.numero + '/pdf?orgao=' + this.orgao)
+        .get('doc/' + this.numero + '/pdf-completo')
         .then(
           response => {
             var jwt = response.data.jwt
@@ -742,5 +747,17 @@ table.mov tr.anexacaox {
 
 table.mov tr.encerramento_volumex {
   background-color: rgb(255, 218, 218);
+}
+
+.card-body p {
+  margin-bottom: .2em;
+}
+
+.card-body div {
+  margin-top: 1em;
+}
+
+.card-body div h6 {
+  margin-bottom: .2em;
 }
 </style>

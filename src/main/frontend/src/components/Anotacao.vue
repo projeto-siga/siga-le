@@ -5,7 +5,7 @@
         <div class="row">
           <div class="form-group col col-sm-12">
             <label class="control-label" for="anotacao" style="width: 100%">Texto da Anotação</label>
-            <b-form-textarea type="text" name="anotacao" id="anotacao" v-model="anotacao"  maxlength="255" class="form-control" aria-describedby="anotacaoHelp" :class="{'is-invalid': errors.has('anotacao') }" style="width: 100%" rows="3" autofocus></b-form-textarea>
+            <b-form-textarea type="text" name="anotacao" id="anotacao" v-model="anotacao"  maxlength="255" class="form-control" aria-describedby="anotacaoHelp" :class="{'is-invalid': errors.has('anotacao') }" style="width: 100%" :rows="3" autofocus></b-form-textarea>
               <span v-if="false" v-show="errors.has('anotacao')" class="help is-danger">{{ errors.first('anotacao') }}</span>
           </div>
         </div>

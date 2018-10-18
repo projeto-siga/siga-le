@@ -1,6 +1,5 @@
 package br.jus.trf2.siga.ex.api;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -8,13 +7,19 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.jus.trf2.siga.ex.api.ISigaDoc.DownloadJwtFilenameGetRequest;
 import br.jus.trf2.siga.ex.api.ISigaDoc.DownloadJwtFilenameGetResponse;
 import br.jus.trf2.siga.ex.api.ISigaDoc.IDownloadJwtFilenameGet;
+import br.jus.trf2.siga.ex.api.SigaDocPdfUtils.InputStreamDownload;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
 public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 
@@ -23,33 +28,36 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 			DownloadJwtFilenameGetResponse resp) throws Exception {
 		Map<String, Object> map = verify(req.jwt);
 		String username = (String) map.get("username");
-		String name = (String) map.get("name");
-		String file = (String) map.get("file");
-		String numProc = (String) map.get("proc");
-		String numDoc = (String) map.get("doc");
-		String orgao = (String) map.get("orgao");
+		String sigla = (String) map.get("doc");
 		String type = (String) map.get("typ");
-		String text = (String) map.get("text");
-		String cargo = (String) map.get("cargo");
-		String empresa = (String) map.get("empresa");
-		String unidade = (String) map.get("unidade");
 		String disposition = "attachment".equals(req.disposition) ? "attachment"
 				: "inline";
 		if (!"download".equals(type))
 			throw new Exception("Tipo de token JWT inválido");
-		if (text != null) {
-			byte[] pdf = null;
-			resp.contentdisposition = "inline";
-			resp.contentlength = (long) pdf.length;
-			resp.contenttype = "application/pdf";
-			resp.inputstream = new ByteArrayInputStream(pdf);
-		} else if (numDoc != null) {
-			// Peça Processual
-			byte[] ab = null;
-			resp.contentdisposition = disposition + ";filename=" + numProc
-					+ "-peca-" + numDoc + ".pdf";
-			resp.contentlength = (long) ab.length;
-			resp.inputstream = new ByteArrayInputStream(ab);
+
+		try (ExDB db = ExDB.create(false)) {
+			DpPessoa cadastrante = db.getPessoaPorPrincipal(username);
+			DpPessoa titular = cadastrante;
+			DpLotacao lotaTitular = cadastrante.getLotacao();
+
+			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			flt.setSigla(sigla);
+			ExMobil mob = db.consultarPorSigla(flt);
+
+			Utils.assertAcesso(mob, titular, lotaTitular);
+
+			InputStreamDownload isd = SigaDocPdfUtils.exibir(mob.getSigla(),
+					false, mob.getSigla() + ".pdf", null, null, null, null, true, false, titular,
+					lotaTitular, db.consultarDataEHoraDoServidor(),
+					SwaggerServlet.getHttpServletRequest(),
+					SwaggerServlet.getHttpServletResponse());
+
+			resp.inputstream = isd.is;
+			resp.contenttype = isd.contentyType;
+			resp.contentdisposition = resp.contentdisposition = disposition
+					+ ";filename=" + isd.fileName;
+			if (isd.contentLength != null)
+				resp.contentlength = (long) isd.contentLength;
 		}
 	}
 
@@ -68,13 +76,10 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 		return map;
 	}
 
-	public static String jwt(String origin, String username, String nome,
-			String orgao, String processo, String documento, String arquivo,
-			String texto, String cargo, String empresa, String unidade) {
+	public static String jwt(String username, String sigla) {
 		final String issuer = Utils.getJwtIssuer();
-		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		// token expires in 10min or 12h
-		final long exp = iat + (documento != null ? 10 * 60L : 12 * 60 * 60L);
+		final long iat = System.currentTimeMillis() / 1000L;
+		final long exp = iat + (10 * 60L); // token expires in 10min
 
 		final JWTSigner signer = new JWTSigner(Utils.getJwtSecret());
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
@@ -83,27 +88,8 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 		claims.put("exp", exp);
 		claims.put("iat", iat);
 
-		if (origin != null)
-			claims.put("origin", origin);
 		claims.put("username", username);
-		if (nome != null)
-			claims.put("name", nome);
-		if (orgao != null)
-			claims.put("orgao", orgao);
-		if (processo != null)
-			claims.put("proc", processo);
-		if (documento != null)
-			claims.put("doc", documento);
-		if (arquivo != null)
-			claims.put("file", arquivo);
-		if (texto != null)
-			claims.put("text", texto);
-		if (cargo != null)
-			claims.put("cargo", cargo);
-		if (empresa != null)
-			claims.put("empresa", empresa);
-		if (unidade != null)
-			claims.put("unidade", unidade);
+		claims.put("doc", sigla);
 		claims.put("typ", "download");
 
 		final String jwt = signer.sign(claims);

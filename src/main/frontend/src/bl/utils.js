@@ -105,15 +105,25 @@ export default {
     return s.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
   },
 
-  filtrarPorSubstring: function (a, s) {
+  // Filtra itens por uma string qualquer. Se desejar restringir o filtro apenas a algumas das propriedades,
+  // informar o parâmetro propriedades na forma: ['propriedade','outraPropriedade','lista.propriedade']
+  filtrarPorSubstring: function (a, s, propriedades) {
     var re = new RegExp(s, 'i')
-    return a.filter(function filterItem (item) {
+    return a.filter(function filterItem (item, idx, arr, context) {
       for (var key in item) {
         if (!item.hasOwnProperty(key)) continue
+        var prop = context
+        prop = context === undefined ? key : context + '.' + key
+        if (Array.isArray(item[key])) {
+          for (var i = 0; i < item[key].length; i++) {
+            if (filterItem(item[key][i], i, item[key], prop)) return true
+          }
+        }
+        if (propriedades && propriedades.indexOf(prop) === -1) continue
         if (typeof item[key] === 'string' && re.test(item[key])) {
           return true
         }
-        if (typeof item[key] === 'object' && filterItem(item[key])) {
+        if (typeof item[key] === 'object' && filterItem(item[key], 0, arr, prop)) {
           return true
         }
       }

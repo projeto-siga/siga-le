@@ -191,13 +191,9 @@ paths:
           schema:
             type: object
             properties:
-              payload:
+              jwt:
                 type: string
-                format: byte
-                description: JSON com os dados do documento
-              contenttype:
-                type: string
-                description: Constante em application/json
+                description: JWT com as informações para download do PDF
         500:
           description: Error ocurred
           schema:
