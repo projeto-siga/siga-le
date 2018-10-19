@@ -154,7 +154,7 @@
 
 
 	<build>
-		<finalName>sigale</finalName>
+		<finalName>siga-le</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
