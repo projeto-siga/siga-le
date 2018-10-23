@@ -623,4 +623,41 @@ em.invalid {
   line-height: 15px;
   color: #ee9393;
 }
+
+.v-autocomplete .v-autocomplete-list {
+    width: 100%;
+    text-align: left;
+    border: none;
+    border-top: none;
+    max-height: 400px;
+    overflow-y: auto;
+    border-bottom: 1px solid #157977
+}
+
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item {
+    cursor: pointer;
+    background-color: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #157977;
+    border-left: 1px solid #157977;
+    border-right: 1px solid #157977
+}
+
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:last-child {
+    border-bottom: none
+}
+
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:hover {
+    background-color: #eee
+}
+
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item abbr {
+    opacity: .8;
+    font-size: .8em;
+    display: block;
+    font-family: sans-serif
+}
+DIV.v-autocomplete-selected INPUT.form-control {
+    background-color: #f2fff2
+}
 </style>

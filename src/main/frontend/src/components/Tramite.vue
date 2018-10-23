@@ -13,12 +13,12 @@
           </div>
           <div class="form-group col col-sm-6" v-if="tipo === 'lotacao'">
             <label class="control-label" for="lotacao" style="width: 100%">Sigla da Lotação</label>
-            <b-form-input type="text" name="lotacao" id="lotacao" v-model="lotacao" class="form-control" aria-describedby="lotacaoHelp" :class="{'is-invalid': errors.has('texto') }" style="width: 100%" autofocus></b-form-input>
+            <v-autocomplete :items="lotacoes" name="lotacao" id="lotacao" v-model="lotacao" :get-label="getLabelLotacao" :component-item='template' @update-items="updateLotacoes" input-class="form-control" autofocus></v-autocomplete>
             <span v-if="false" v-show="errors.has('lotacao')" class="help is-danger">{{ errors.first('lotacao') }}</span>
           </div>
           <div class="form-group col col-sm-6" v-if="tipo === 'matricula'">
             <label class="control-label" for="matricula" style="width: 100%">Matrícula</label>
-            <b-form-input type="matricula" name="matricula" id="matricula" v-model="matricula" class="form-control" :class="{'is-invalid': errors.has('matricula') }"></b-form-input>
+            <v-autocomplete :items="pessoas" name="matricula" id="matricula" v-model="matricula" :get-label="getLabelPessoa" :component-item='template' @update-items="updatePessoas" input-class="form-control"></v-autocomplete>
             <span v-if="false" v-show="errors.has('matricula')" class="help is-danger">{{ errors.first('matricula') }}</span>
           </div>
         </div>
@@ -38,6 +38,8 @@
 
 <script>
 import { Bus } from '../bl/bus.js'
+import ItemTemplate from './ItemTemplate.vue'
+import UtilsBL from '../bl/utils.js'
 
 export default {
   name: 'tramite',
@@ -52,11 +54,62 @@ export default {
       tipo: 'lotacao',
       lotacao: undefined,
       matricula: undefined,
-      documentos: undefined
+      documentos: undefined,
+      item: 'Monica',
+      lotacoes: [],
+      pessoas: [],
+      template: ItemTemplate
     }
   },
 
   methods: {
+    getLabelLotacao: function (item) {
+      return item
+    },
+    getLabelPessoa: function (item) {
+      return item
+    },
+    updatePessoas: function (text) {
+      // yourGetItemsMethod(text).then((response) => {
+      //   this.items = response
+      // })
+      this.errormsg = undefined
+      this.$http.get('pessoa/' + text + '/pesquisar').then(
+        response => {
+          this.pessoas = []
+          var l = response.data.list
+          if (l) {
+            for (var i = 0; i < l.length; i++) {
+              this.pessoas.push(l[i].sigla + ' - ' + l[i].nome)
+            }
+          }
+        },
+        error => {
+          UtilsBL.errormsg(error, this)
+        }
+      )
+    },
+    updateLotacoes: function (text) {
+      // yourGetItemsMethod(text).then((response) => {
+      //   this.items = response
+      // })
+      this.errormsg = undefined
+      this.$http.get('lotacao/' + text + '/pesquisar').then(
+        response => {
+          this.lotacoes = []
+          var l = response.data.list
+          if (l) {
+            for (var i = 0; i < l.length; i++) {
+              this.lotacoes.push(l[i].sigla + ' - ' + l[i].nome)
+            }
+          }
+        },
+        error => {
+          UtilsBL.errormsg(error, this)
+        }
+      )
+    },
+
     show: function (documentos, cont) {
       this.showModal = true
       this.errormsg = undefined
@@ -84,7 +137,12 @@ export default {
         }
       }
 
-      Bus.$emit('tramitar', this.documentos, this.lotacao, this.matricula, this.cont)
+      var lotacao = this.lotacao
+      if (lotacao) lotacao = lotacao.split(' - ')[0]
+      var matricula = this.matricula
+      if (matricula) matricula = matricula.split(' - ')[0]
+
+      Bus.$emit('tramitar', this.documentos, lotacao, matricula, this.cont)
       this.$refs.modal.hide(true)
     },
 

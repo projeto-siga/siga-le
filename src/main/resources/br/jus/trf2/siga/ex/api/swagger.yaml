@@ -17,6 +17,8 @@ tags:
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
+  - name: cadastro
+    description: Consulta nos Cadastros
   - name: utils
     description: Utilitários
 
@@ -89,6 +91,12 @@ parameters:
     name: anotacao
     in: path
     description: Texto da anotação
+    required: true
+    type: string
+  texto:
+    name: texto
+    in: path
+    description: Texto a ser pesquisado
     required: true
     type: string
   jwt:
@@ -375,6 +383,48 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
+  /pessoa/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de pessoas
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lotacao/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de lotações
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
 
 
 ################################################################################
@@ -469,6 +519,15 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Acao"
+
+  ResultadoDePesquisa:
+    description: Dados de um item
+    type: object
+    properties:
+      sigla:
+        type: string
+      nome:
+        type: string
 
   Error:
     type: object

@@ -1,5 +1,6 @@
 package br.jus.trf2.siga.ex.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,15 +15,45 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
-import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDB extends ExDao implements AutoCloseable {
 	public static EntityManagerFactory emf;
 
 	boolean transactional;
+
+	@SuppressWarnings("unchecked")
+	public List<DpPessoa> listarPessoas(final String texto) {
+		if (texto == null || texto.trim().length() == 0)
+			return new ArrayList<>();
+		Query query = getSessao()
+				.createQuery(
+						"from DpPessoa pes "
+								+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
+								+ "   	and pes.dataFimPessoa = null"
+								+ "   	order by pes.nomePessoa");
+		query.setString("nome", texto);
+
+		final List<DpPessoa> l = query.list();
+		return l;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<DpLotacao> listarLotacoes(final String texto) {
+		if (texto == null || texto.trim().length() == 0)
+			return new ArrayList<>();
+		Query query = getSessao()
+				.createQuery(
+						"select lot from DpLotacao lot join lot.orgaoUsuario org "
+								+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (org.siglaOrgaoUsu || upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
+								+ "   	and lot.dataFimLotacao = null"
+								+ "   	order by lot.nomeLotacao");
+		query.setString("nome", texto);
+
+		final List<DpLotacao> l = query.list();
+		return l;
+	}
 
 	public List listarDocumentosPorPessoaOuLotacao(DpPessoa titular,
 			DpLotacao lotaTitular) {

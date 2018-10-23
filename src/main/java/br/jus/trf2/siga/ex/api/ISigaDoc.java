@@ -9,7 +9,6 @@ import com.crivano.swaggerservlet.ISwaggerModel;
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
 import com.crivano.swaggerservlet.ISwaggerResponseFile;
-import com.crivano.swaggerservlet.ISwaggerResponsePayload;
 
 public interface ISigaDoc {
 	public class MesaItem implements ISwaggerModel {
@@ -52,6 +51,11 @@ public interface ISigaDoc {
 		public String descr;
 		public List<Marca> marca;
 		public List<Acao> acao;
+	}
+
+	public class ResultadoDePesquisa implements ISwaggerModel {
+		public String sigla;
+		public String nome;
 	}
 
 	public class Error implements ISwaggerModel {
@@ -299,6 +303,32 @@ public interface ISigaDoc {
 	public interface ITokenCriarPost extends ISwaggerMethod {
 		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp)
 				throws Exception;
+	}
+
+	public class PessoaTextoPesquisarGetRequest implements ISwaggerRequest {
+		public String texto;
+	}
+
+	public class PessoaTextoPesquisarGetResponse implements ISwaggerResponse {
+		public List<ResultadoDePesquisa> list;
+	}
+
+	public interface IPessoaTextoPesquisarGet extends ISwaggerMethod {
+		public void run(PessoaTextoPesquisarGetRequest req,
+				PessoaTextoPesquisarGetResponse resp) throws Exception;
+	}
+
+	public class LotacaoTextoPesquisarGetRequest implements ISwaggerRequest {
+		public String texto;
+	}
+
+	public class LotacaoTextoPesquisarGetResponse implements ISwaggerResponse {
+		public List<ResultadoDePesquisa> list;
+	}
+
+	public interface ILotacaoTextoPesquisarGet extends ISwaggerMethod {
+		public void run(LotacaoTextoPesquisarGetRequest req,
+				LotacaoTextoPesquisarGetResponse resp) throws Exception;
 	}
 
 }
