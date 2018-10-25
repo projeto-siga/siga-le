@@ -24,7 +24,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 	boolean transactional;
 
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> listarPessoas(final String texto) {
+	public List<DpPessoa> listarPessoas(String texto) {
 		if (texto == null || texto.trim().length() == 0)
 			return new ArrayList<>();
 		Query query = getSessao()
@@ -33,6 +33,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 								+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
 								+ "   	and pes.dataFimPessoa = null"
 								+ "   	order by pes.nomePessoa");
+		texto = texto.replaceAll("\\s+", "%");
 		query.setString("nome", texto);
 
 		final List<DpPessoa> l = query.list();
@@ -40,7 +41,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpLotacao> listarLotacoes(final String texto) {
+	public List<DpLotacao> listarLotacoes(String texto) {
 		if (texto == null || texto.trim().length() == 0)
 			return new ArrayList<>();
 		Query query = getSessao()
@@ -49,6 +50,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 								+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (org.siglaOrgaoUsu || upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 								+ "   	and lot.dataFimLotacao = null"
 								+ "   	order by lot.nomeLotacao");
+		texto = texto.replaceAll("\\s+", "%");
 		query.setString("nome", texto);
 
 		final List<DpLotacao> l = query.list();

@@ -13,7 +13,7 @@
           </div>
           <div class="form-group col col-sm-6" v-if="tipo === 'lotacao'">
             <label class="control-label" for="lotacao" style="width: 100%">Sigla da Lotação</label>
-            <v-autocomplete :items="lotacoes" name="lotacao" id="lotacao" v-model="lotacao" :get-label="getLabelLotacao" :component-item='template' @update-items="updateLotacoes" input-class="form-control" autofocus></v-autocomplete>
+            <v-autocomplete :items="lotacoes" name="lotacao" id="lotacao" v-model="lotacao" :get-label="getLabelLotacao" :component-item='template' @update-items="updateLotacoes" input-class="form-control"></v-autocomplete>
             <span v-if="false" v-show="errors.has('lotacao')" class="help is-danger">{{ errors.first('lotacao') }}</span>
           </div>
           <div class="form-group col col-sm-6" v-if="tipo === 'matricula'">
@@ -52,8 +52,8 @@ export default {
       showModal: false,
       errormsg: undefined,
       tipo: 'lotacao',
-      lotacao: undefined,
-      matricula: undefined,
+      lotacao: null,
+      matricula: null,
       documentos: undefined,
       item: 'Monica',
       lotacoes: [],
@@ -73,8 +73,9 @@ export default {
       // yourGetItemsMethod(text).then((response) => {
       //   this.items = response
       // })
+      if (!text || text === '') return
       this.errormsg = undefined
-      this.$http.get('pessoa/' + text + '/pesquisar').then(
+      this.$http.get('pessoa/' + encodeURI(text) + '/pesquisar').then(
         response => {
           this.pessoas = []
           var l = response.data.list
@@ -93,8 +94,9 @@ export default {
       // yourGetItemsMethod(text).then((response) => {
       //   this.items = response
       // })
+      if (!text || text === '') return
       this.errormsg = undefined
-      this.$http.get('lotacao/' + text + '/pesquisar').then(
+      this.$http.get('lotacao/' + encodeURI(text) + '/pesquisar').then(
         response => {
           this.lotacoes = []
           var l = response.data.list
@@ -114,6 +116,8 @@ export default {
       this.showModal = true
       this.errormsg = undefined
       this.documentos = documentos
+      this.matricula = null
+      this.lotacao = null
       this.cont = cont
     },
 
