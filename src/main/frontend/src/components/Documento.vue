@@ -312,7 +312,8 @@ export default {
     },
 
     assinarComSenha: function() {
-      Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
+      // Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
+      Bus.$emit('assinarComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], undefined, undefined, this.reler)
     },
 
     tramitar: function() {

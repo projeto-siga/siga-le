@@ -50,7 +50,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 					req.password.getBytes(), "MD5");
 
 			final CpIdentidade id = db.consultaIdentidadeCadastrante(
-					req.username, true);
+					req.username.toUpperCase(), true);
 
 			// se o usuário não existir
 			if (id == null)
@@ -64,7 +64,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 				throw new AplicacaoException("Senha inválida.");
 			}
 
-			String jwt = jwt(origem, req.username,
+			String jwt = jwt(origem, req.username.toUpperCase(),
 					Long.toString(pessoa.getCpfPessoa()),
 					pessoa.getNomePessoa(), pessoa.getEmailPessoaAtual());
 			verify(jwt);

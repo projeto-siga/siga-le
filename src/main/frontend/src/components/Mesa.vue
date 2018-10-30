@@ -46,7 +46,7 @@
 
     <div class="row" v-if="filtrados.length > 0">
       <div class="col-sm-12">
-					<table class="table table-sm table-borderless table-responsive">
+					<table class="table table-sm table-borderless">
             <tbody>
             <template v-for="f in filtrados">
 							<tr v-if="f.grupoExibir" class="table-group">
@@ -58,21 +58,21 @@
               <th style="text-align: center">
                 <input type="checkbox" id="progress_checkall" name="progress_checkall" v-model="todos" @change="marcarTodos()"></input>
               </th>
-								<th>Tempo</th>
+								<th class="d-none d-md-block">Tempo</th>
 								<th>Código</th>
-								<th>Descrição</th>
+								<th class="d-none d-md-block">Descrição</th>
 								<th>Origem</th>
-								<th>Etiquetas</th>
+								<th class="d-none d-md-block">Etiquetas</th>
 							</tr>
 							<tr v-bind:class="{odd: f.odd}">
               <td style="text-align: center">
                 <input type="checkbox" v-model="f.checked" :disabled="f.disabled"></input>
               </td>
-								<td :title="f.datahora">{{f.tempoRelativo}}</td>
-								<td><router-link :to="{name: 'Documento', params: {numero: f.codigo}}">{{f.sigla}}</router-link></td>
-								<td>{{f.descr}}</td>
+								<td class="d-none d-md-block" :title="f.datahora">{{f.tempoRelativo}}</td>
+								<td><router-link :to="{name: 'Documento', params: {numero: f.codigo}}">{{f.sigla}}</router-link><span class="d-inline d-md-none"> - {{f.descr}}</span></td>
+								<td class="d-none d-md-block">{{f.descr}}</td>
 								<td>{{f.origem}}</td>
-								<td style="padding: 0;"><div  class="xrp-label-container">
+								<td class="d-none d-md-block" style="padding: 0;"><div  class="xrp-label-container">
 									<!-- class="list-unstyled blog-tags" -->
 										<span v-for="m in f.list" :title="m.titulo"><button
 											class="btn btn-default btn-sm xrp-label"><i
@@ -212,7 +212,8 @@ export default {
 
     assinarComSenhaEmLote: function() {
       var a = this.filtradosEMarcadosEAssinaveis
-      Bus.$emit('iniciarAssinaturaComSenha', a, this.carregarMesa)
+      // Bus.$emit('iniciarAssinaturaComSenha', a, this.carregarMesa)
+      Bus.$emit('assinarComSenha', a, undefined, undefined, this.carregarMesa)
     },
 
     anotarEmLote: function() {

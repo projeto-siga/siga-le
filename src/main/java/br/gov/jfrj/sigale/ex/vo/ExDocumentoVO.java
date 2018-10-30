@@ -88,7 +88,8 @@ public class ExDocumentoVO extends ExVO {
 		this.descrDocumento = doc.getDescrDocumento();
 
 		this.podeAssinar = Ex.getInstance().getComp()
-				.podeAssinarComSenha(titular, lotaTitular, mob);
+				.podeAssinarComSenha(titular, lotaTitular, mob)
+				&& !mob.doc().isAssinadoPelaPessoaComTokenOuSenha(titular);
 		this.exTipoDocumentoDescricao = doc.getExTipoDocumento().getDescricao();
 
 		if (!completo)

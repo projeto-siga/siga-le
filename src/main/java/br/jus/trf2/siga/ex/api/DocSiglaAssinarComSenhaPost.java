@@ -60,8 +60,8 @@ public class DocSiglaAssinarComSenhaPost implements
 				Ex.getInstance()
 						.getBL()
 						.assinarDocumentoComSenha(cadastrante, lotaTitular,
-								doc, null, req.username, req.password, titular,
-								false, null, false);
+								doc, null, u.usuario, null, false,
+								titular, false, null, false);
 
 				db.commit();
 				resp.status = "OK";
