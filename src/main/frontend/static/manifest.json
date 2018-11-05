@@ -1,0 +1,34 @@
+{
+  "name": "Siga-Le",
+  "short_name": "Siga-Le",
+  "icons": [
+    {
+        "src": "logo-siga-128x128.png",
+        "sizes": "128x128",
+        "type": "image/png"
+    }, {
+      "src": "logo-siga-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }, {
+      "src": "logo-siga-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    }, {
+      "src": "logo-siga-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }, {
+      "src": "logo-siga-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }, {
+      "src": "logo-siga-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }],
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#212529",
+  "theme_color": "#212529"
+}

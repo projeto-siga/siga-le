@@ -5,12 +5,12 @@
         <div class="row">
           <div class="form-group col col-sm-6">
             <label class="control-label" for="username" style="width: 100%">Matrícula</label>
-            <b-form-input type="text" name="username" id="username" v-model="username" class="form-control" aria-describedby="usernameHelp" :class="{'is-invalid': errors.has('texto') }" style="width: 100%" v-validate.initial="'required'"></b-form-input>
+            <b-form-input type="text" name="username" id="username-sign" v-model="username" class="form-control" aria-describedby="usernameHelp" :class="{'is-invalid': errors.has('texto') }" style="width: 100%" v-validate.initial="'required'"></b-form-input>
             <span v-if="false" v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
           </div>
           <div class="form-group col col-sm-6">
             <label class="control-label" for="password" style="width: 100%">Senha</label>
-            <b-form-input type="password" name="password" id="password" v-model="password" class="form-control" :class="{'is-invalid': errors.has('password') }" v-validate.initial="'required'"></b-form-input>
+            <b-form-input type="password" name="password" id="password-sign" v-model="password" class="form-control" :class="{'is-invalid': errors.has('password') }" v-validate.initial="'required'"></b-form-input>
             <span v-if="false" v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
           </div>
         </div>
