@@ -9,6 +9,11 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
+
+const PUBLIC_PATH = '/siga-le/';
+
 var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.build.env
@@ -24,7 +29,8 @@ var webpackConfig = merge(baseWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js'),
+    publicPath: PUBLIC_PATH
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -96,7 +102,33 @@ var webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new SWPrecacheWebpackPlugin(
+      {
+        cacheId: 'sigale-cache-id',
+        dontCacheBustUrlsMatching: /\.\w{8}\./,
+        filename: 'service-worker.js',
+        minify: true,
+        navigateFallback: PUBLIC_PATH + 'index.html',
+        staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/]
+      },
+    ),
+    new WebpackPwaManifest({
+      name: 'Siga-Le',
+      short_name: 'Siga-Le',
+      description: 'Nova interface móvel para o Siga-Doc',
+      background_color: '#212529',
+      theme_color: '#212529',
+      'theme-color': '#212529',
+      start_url: '/siga-le/index.html',
+      icons: [
+        {
+          src: path.resolve('src/assets/logo-siga.png'),
+          sizes: [96, 128, 192, 256, 384, 512],
+          destination: path.join('static', 'icons')
+        }
+      ]
+    })
   ]
 })
 

@@ -72,11 +72,11 @@ Vue.http.options.root = process.env.API_URL
 new Vue({
   el: '#app',
   mounted() {
-    Vue.http.interceptors.push(function (request, next) {
+    Vue.http.interceptors.push(function(request, next) {
       if (request.block) Bus.$emit('block', request.blockmin, request.blockmax)
 
       // continue to next interceptor
-      next(function (response) {
+      next(function(response) {
         if (request.block) Bus.$emit('release')
         if (response.status === 401) location.reload()
       })
@@ -89,12 +89,12 @@ new Vue({
   }
 })
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('static/service-worker.js')
-    .then(function (reg) {
-      console.log('Service worker Registered')
-    })
-    .catch(function (err) {
-      console.log('Error', err)
-    })
+var regServiceWorker = function() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js', {
+      scope: '/siga-le/'
+    }).then(() => console.log('Service Worker registered successfully.')).catch(error => console.log('Service Worker registration failed:', error))
+  }
 }
+
+regServiceWorker()
