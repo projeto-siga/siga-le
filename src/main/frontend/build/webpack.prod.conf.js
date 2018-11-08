@@ -109,9 +109,9 @@ var webpackConfig = merge(baseWebpackConfig, {
         dontCacheBustUrlsMatching: /\.\w{8}\./,
         filename: 'service-worker.js',
         minify: true,
-        navigateFallback: PUBLIC_PATH + 'index.html',
-        staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/]
-      },
+        staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/],
+        navigateFallback: PUBLIC_PATH + 'index.html'
+      }
     ),
     new WebpackPwaManifest({
       name: 'Siga-Le',
