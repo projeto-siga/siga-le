@@ -77,14 +77,13 @@ public class ExDB extends ExDao implements AutoCloseable {
 			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
 
 		List l = query.list();
-		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
-				/ 1000000 + " ms -> " + query + ", resultado: " + l);
+ 		long tempoTotal = System.nanoTime() - tempoIni;
+		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
 
 	public static ExDB create(boolean transactional) {
-		System.out.println("*****************PASSEI NO EXDB**************");
 		if (emf == null)
 			emf = Persistence.createEntityManagerFactory("default-ex");
 

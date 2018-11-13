@@ -11,8 +11,8 @@
       </div>
     </div>
 
-    <div class="row d-print-none">
-      <div class="col col-auto">
+    <div class="row d-print-none" v-if="!carregando &amp;&amp; lista.length > 0">
+      <div class="col col-12 col-md-auto">
         <div class="input-group mt-3">
           <div class="input-group-addon">
             <span class="fa fa-search"></span>
@@ -22,22 +22,30 @@
       </div>
       <div class="col col-auto ml-auto">
         <button v-if="(filtrados||[]).length" type="button" @click="anotarEmLote()" class="btn btn-primary mt-3" title="">
-          <span class="fa fa-sticky-note-o"></span> Anotar&nbsp;&nbsp;
+          <span class="fa fa-sticky-note-o d-none d-md-inline"></span> Anotar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcados.length}}</span>
         </button>
         <button v-if="(filtradosEAssinaveis||[]).length" type="button" @click="assinarComSenhaEmLote()" class="btn btn-primary mt-3" title="">
-          <span class="fa fa-shield"></span> Assinar&nbsp;&nbsp;
+          <span class="fa fa-shield d-none d-md-inline"></span> Assinar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosEAssinaveis.length}}</span>
         </button>
         <button v-if="(filtradosETramitaveis||[]).length" type="button" @click="tramitarEmLote()" class="btn btn-primary mt-3" title="">
-          <span class="fa fa-paper-plane-o"></span> Tramitar&nbsp;&nbsp;
+          <span class="fa fa-paper-plane-o d-none d-md-inline"></span> Tramitar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosETramitaveis.length}}</span>
         </button>
       </div>
     </div>
 
-    <div class="row" v-if="filtrados.length == 0">
-      <div class="col col-sm-12">
+    <div class="row mt-3" v-if="carregando &amp;&amp; primeiraCarga">
+      <div class="col col-12">
+        <p class="alert alert-warning">
+          <strong>Aguarde,</strong> carregando documentos...
+        </p>
+      </div>
+    </div>
+
+    <div class="row mt-3" v-if="!carregando &amp;&amp; filtrados.length == 0">
+      <div class="col col-12">
         <p class="alert alert-warning">
           <strong>Atenção!</strong> Nenhum documento na mesa.
         </p>
@@ -63,6 +71,7 @@
 								<th class="d-none d-md-block">Descrição</th>
 								<th>Origem</th>
 								<th class="d-none d-md-block">Etiquetas</th>
+								<th v-show="filtradosTemAlgumErro">Atenção</th>
 							</tr>
 							<tr v-bind:class="{odd: f.odd}">
               <td style="text-align: center">
@@ -82,6 +91,7 @@
 												v-if="m.unidade &amp;&amp; (!m.daLotacao || (!m.daPessoa && !m.deOutraPessoa))">
 													/ {{m.unidade}}</span></button></span></div>
 								</td>
+								<td v-show="filtradosTemAlgumErro" style="color: red">{{f.errormsg}}</td>
 							</tr>
               <tr v-if="f.grupoEspacar" class="table-group">
 								<th colspan="6" class="pb-2 pb-0 pl-0">
@@ -117,6 +127,8 @@ export default {
       filtro: undefined,
       lista: [],
       todos: true,
+      carregando: false,
+      primeiraCarga: true,
       errormsg: undefined
     }
   },
@@ -139,6 +151,14 @@ export default {
         a[i].odd = odd
       }
       return a
+    },
+
+    filtradosTemAlgumErro: function() {
+      if (!this.filtrados || this.filtrados.length === 0) return false
+      for (var i = 0; i < this.filtrados.length; i++) {
+        if (this.filtrados[i].errormsg) return true
+      }
+      return false
     },
 
     filtradosEAssinaveis: function() {
@@ -174,15 +194,28 @@ export default {
 
   methods: {
     carregarMesa: function() {
+      this.carregando = true
+      var erros = {}
+      if (this.lista && this.lista.length > 0) {
+        for (var i = 0; i < this.lista.length; i++) {
+          erros[this.lista[i].codigo] = this.lista[i].errormsg
+        }
+      }
       this.$http.get('mesa', { block: true }).then(
         response => {
+          this.carregando = false
           this.lista.length = 0
           var list = response.data.list
           for (var i = 0; i < list.length; i++) {
+            list[i].errormsg = erros[list[i].codigo]
             this.lista.push(this.fixItem(list[i]))
           }
+          this.primeiraCarga = false
         },
-        error => UtilsBL.errormsg(error, this)
+        error => {
+          this.carregando = false
+          UtilsBL.errormsg(error, this)
+        }
       )
     },
 

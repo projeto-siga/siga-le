@@ -8,35 +8,37 @@ import Sobre from '@/components/Sobre'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [{
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
-    path: '/documento/:numero',
-    name: 'Documento',
-    component: Documento,
-    meta: {
-      title: route => {
-        return 'Documento ' + route.params.numero + '..'
+const router = new Router({
+  routes: [
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    }, {
+      path: '/documento/:numero',
+      name: 'Documento',
+      component: Documento,
+      meta: {
+        title: route => {
+          return 'Documento ' + route.params.numero + '..'
+        }
       }
+    }, {
+      path: '/sugestoes',
+      name: 'Sugestões',
+      component: Sugestoes
+    }, {
+      path: '/sobre',
+      name: 'Sobre',
+      component: Sobre
+    }, {
+      path: '/',
+      name: 'Mesa',
+      component: Mesa
+    }, {
+      path: '*',
+      redirect: '/'
     }
-  },
-  {
-    path: '/mesa',
-    name: 'Mesa',
-    component: Mesa
-  },
-  {
-    path: '/sugestoes',
-    name: 'Sugestões',
-    component: Sugestoes
-  },
-  {
-    path: '/sobre',
-    name: 'Sobre',
-    component: Sobre
-  }]
+  ]
 })
+export default router

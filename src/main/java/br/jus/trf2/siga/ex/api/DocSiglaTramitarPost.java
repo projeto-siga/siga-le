@@ -1,32 +1,17 @@
 package br.jus.trf2.siga.ex.api;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.crivano.swaggerservlet.PresentableUnloggedException;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.jus.trf2.siga.ex.api.ISigaDoc.DocSiglaTramitarPostRequest;
 import br.jus.trf2.siga.ex.api.ISigaDoc.DocSiglaTramitarPostResponse;
 import br.jus.trf2.siga.ex.api.ISigaDoc.IDocSiglaTramitarPost;
 import br.jus.trf2.siga.ex.api.TokenCriarPost.Usuario;
-
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
@@ -60,7 +45,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
 				if (!Ex.getInstance().getComp()
 						.podeTransferir(titular, lotaTitular, mob))
-					throw new Exception("O documento " + req.sigla
+					throw new PresentableUnloggedException("O documento " + req.sigla
 							+ " não pode ser tramitado por "
 							+ titular.getSiglaCompleta() + "/"
 							+ lotaTitular.getSiglaCompleta());

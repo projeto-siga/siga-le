@@ -30,6 +30,7 @@ export default {
   data () {
     return {
       showModal: false,
+      running: false,
       i: 0,
       title: undefined,
       caption: undefined,
@@ -58,17 +59,19 @@ export default {
         return
       }
 
-      this.showModal = true
+      this.showModal = this.total > 1
+      this.running = true
       this.i = 0
       this.proximo()
     },
 
     cancel: function () {
       this.showModal = false
+      this.running = false
     },
 
     next: function () {
-      if (!this.showModal) return
+      if (!this.running) return
       this.i++
       if (this.i >= this.total) {
         this.cancel()

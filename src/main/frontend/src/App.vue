@@ -253,60 +253,66 @@ export default {
 
     assinarComSenha: function (d, username, password, lote) {
       this.errormsg = undefined
-      if (lote) Bus.$emit('prgCaption', 'Assinando ' + d.sigla)
+      Bus.$emit('prgCaption', 'Assinando ' + d.sigla)
 
       this.$http.post('doc/' + d.codigo + '/assinar-com-senha', {
         username: username,
         password: password
       }, { block: !lote }).then(response => {
+        d.errormsg = undefined
         UtilsBL.logEvento('assinatura em lote', 'assinado', 'assinado com senha')
-        if (lote) Bus.$emit('prgNext')
+        Bus.$emit('prgNext')
       }, error => {
-        d.errormsg = error.data.errormsg
-        if (lote) Bus.$emit('prgNext')
+        if (lote) d.errormsg = error.data.errormsg
+        else Bus.$emit('message', 'Erro', error.data.errormsg)
+        Bus.$emit('prgNext')
       })
     },
 
     assinarComSenhaEmLote: function (documentos, username, password, cont) {
-      Bus.$emit('prgStart', 'Assinando Com Senha', documentos.length, (i) => this.assinarComSenha(documentos[i], username, password, true), cont)
+      Bus.$emit('prgStart', 'Assinando Com Senha', documentos.length, (i) => this.assinarComSenha(documentos[i], username, password, documentos.length !== 1), cont)
     },
 
     tramitar: function (d, lotacao, matricula, lote) {
       this.errormsg = undefined
-      if (lote) Bus.$emit('prgCaption', 'Tramitando ' + d.sigla)
+      Bus.$emit('prgCaption', 'Tramitando ' + d.sigla)
 
       this.$http.post('doc/' + d.codigo + '/tramitar', {
         lotacao: lotacao,
         matricula: matricula
       }, { block: !lote }).then(response => {
+        d.errormsg = undefined
         UtilsBL.logEvento('tramite em lote', 'tramitado')
-        if (lote) Bus.$emit('prgNext')
+        Bus.$emit('prgNext')
       }, error => {
-        d.errormsg = error.data.errormsg
-        if (lote) Bus.$emit('prgNext')
+        if (lote) d.errormsg = error.data.errormsg
+        else Bus.$emit('message', 'Erro', error.data.errormsg)
+        Bus.$emit('prgNext')
       })
     },
 
     tramitarEmLote: function (documentos, lotacao, matricula, cont) {
-      Bus.$emit('prgStart', 'Tramitando', documentos.length, (i) => this.tramitar(documentos[i], lotacao, matricula, true), cont)
+      Bus.$emit('prgStart', 'Tramitando', documentos.length, (i) => this.tramitar(documentos[i], lotacao, matricula, documentos.length !== 1), cont)
     },
 
     anotarEmLote: function (documentos, anotacao, cont) {
-      Bus.$emit('prgStart', 'Anotando', documentos.length, (i) => this.anotar(documentos[i], anotacao, true), cont)
+      Bus.$emit('prgStart', 'Anotando', documentos.length, (i) => this.anotar(documentos[i], anotacao, documentos.length !== 1), cont)
     },
 
     anotar: function (d, anotacao, lote) {
       this.errormsg = undefined
-      if (lote) Bus.$emit('prgCaption', 'Anotando ' + d.sigla)
+      Bus.$emit('prgCaption', 'Anotando ' + d.sigla)
 
       this.$http.post('doc/' + d.codigo + '/anotar', {
         anotacao: anotacao
       }, { block: !lote }).then(response => {
+        d.errormsg = undefined
         UtilsBL.logEvento('anotacao em lote', 'anotado')
-        if (lote) Bus.$emit('prgNext')
+        Bus.$emit('prgNext')
       }, error => {
-        d.errormsg = error.data.errormsg
-        if (lote) Bus.$emit('prgNext')
+        if (lote) d.errormsg = error.data.errormsg
+        else Bus.$emit('message', 'Erro', error.data.errormsg)
+        Bus.$emit('prgNext')
       })
     }
 

@@ -33,6 +33,7 @@ public class SigaDocServlet extends SwaggerServlet {
 
 		super.addProperty(new PublicProperty("siga.ex.api.env"));
 		super.addProperty(new PublicProperty("siga.ex.api.wootric.token"));
+		super.addProperty(new PublicProperty("graphviz.url"));
 
 		super.addProperty(new PrivateProperty("siga.ex.api.jwt.secret"));
 

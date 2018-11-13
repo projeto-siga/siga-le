@@ -19,8 +19,11 @@
             <div class="row xd-print-block mt-3 mb-3">
                 <div class="col-md-12">
                     <h4 class="text-center mb-0">
-                        {{doc.forma}} {{doc.sigla}}
+                        {{doc.forma}} {{doc.mobs[0].sigla}}
                     </h4>
+                </div>
+                <div class="col-md-12">
+                  <h6 class="text-center mb-0 mt-2" v-html="doc.mobs[0].marcadoresEmHtml"></h6>
                 </div>
             </div>
             <div class="row no-gutters mt-2">
@@ -71,7 +74,7 @@
             <template v-if="doc">
               <div class="row">
                 <div class="col col-sm-12 col-lg-8">                
-                  <div class="d-print-none" v-if="errormsg === undefined">
+                  <div class="d-print-none" v-if="errormsg === undefined &amp;&amp; doc.conteudoBlobHtmlString">
                       <div class="card-deck">
                           <div class="card card-consulta-processual mb-3">
                               <div class="card-body">
@@ -161,6 +164,14 @@
                           </div>
                       </div>
                   </div>
+
+                  <!-- TRAMITACAO -->
+                  <div class="card bg-light mb-3" v-show="doc.dotTramitacao">
+                      <div class="card-header">Tramitação</div>
+                      <div class="card-body" v-html="tramitacao">
+                      </div>
+                  </div>
+
                   <!-- DETALHES -->
                   <div class="card bg-light">
                       <div class="card-header">Documento {{doc.exTipoDocumentoDescricao}}</div>
@@ -257,7 +268,7 @@ export default {
     this.$on('filtrar', texto => {
       this.filtrarMovimentos(texto)
     })
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       this.carregarDocumento(this.$route.params.numero)
     })
   },
@@ -278,18 +289,22 @@ export default {
       mob: undefined,
       marcadores: [],
       marcasativas: true,
-      notas: false
+      notas: false,
+      tramitacao: undefined
     }
   },
   watch: {
-    '$route.params.numero': function (id) {
+    '$route.params.numero': function(id) {
       this.carregarDocumento(this.$route.params.numero)
     }
   },
   methods: {
     executar: function(mov, acao) {
       if (acao.acao === 'exibir') {
-        this.$router.push({ name: 'Documento', params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, '') } })
+        this.$router.push({
+          name: 'Documento',
+          params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, '') }
+        })
       }
     },
 
@@ -302,7 +317,26 @@ export default {
           Bus.$emit('release')
           this.doc = response.data
           this.mob = this.doc.mobs[0]
-          console.log(this.doc)
+          if (this.$parent.test.properties['graphviz.url']) {
+            console.log('dotTramitacao: ' + this.doc.dotTramitacao)
+            this.$http
+              .post('http://localhost:8080/siga/public/app/graphviz/svg', 'digraph G { graph[tooltip="Tramitação"] ' + this.doc.dotTramitacao + '}', {
+                headers: { 'Content-Type': 'text/vnd.graphviz' }
+              })
+              .then(
+                response => {
+                  this.tramitacao = response.data.replace(
+                    /width="\d+pt" height="\d+pt"/gm,
+                    'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
+                  )
+                  this.tramitacao = this.tramitacao.replace(
+                    /<polygon fill="white".+?\/>/gm,
+                    ''
+                  )
+                  console.log('tramitacao: ' + this.tramitacao)
+                }
+              )
+          }
         },
         error => {
           Bus.$emit('release')
@@ -313,15 +347,29 @@ export default {
 
     assinarComSenha: function() {
       // Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
-      Bus.$emit('assinarComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], undefined, undefined, this.reler)
+      Bus.$emit(
+        'assinarComSenha',
+        [{ codigo: this.numero, sigla: this.doc.sigla }],
+        undefined,
+        undefined,
+        this.reler
+      )
     },
 
     tramitar: function() {
-      Bus.$emit('iniciarTramite', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
+      Bus.$emit(
+        'iniciarTramite',
+        [{ codigo: this.numero, sigla: this.doc.sigla }],
+        this.reler
+      )
     },
 
     anotar: function() {
-      Bus.$emit('iniciarAnotacao', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
+      Bus.$emit(
+        'iniciarAnotacao',
+        [{ codigo: this.numero, sigla: this.doc.sigla }],
+        this.reler
+      )
     },
 
     reler: function() {
@@ -428,29 +476,27 @@ export default {
         )
     },
     mostrarCompleto: function() {
-      this.$http
-        .get('doc/' + this.numero + '/pdf-completo')
-        .then(
-          response => {
-            var jwt = response.data.jwt
-            window.open(
-              this.$http.options.root +
-                '/download/' +
-                jwt +
-                '/' +
-                this.numero +
-                '.pdf'
-            )
-            UtilsBL.logEvento(
-              'consulta-processual',
-              'mostrar pdf completo',
-              'individual'
-            )
-          },
-          error => {
-            Bus.$emit('message', 'Erro', error.data.errormsg)
-          }
-        )
+      this.$http.get('doc/' + this.numero + '/pdf-completo').then(
+        response => {
+          var jwt = response.data.jwt
+          window.open(
+            this.$http.options.root +
+              '/download/' +
+              jwt +
+              '/' +
+              this.numero +
+              '.pdf'
+          )
+          UtilsBL.logEvento(
+            'consulta-processual',
+            'mostrar pdf completo',
+            'individual'
+          )
+        },
+        error => {
+          Bus.$emit('message', 'Erro', error.data.errormsg)
+        }
+      )
     },
     filtrarMovimentos: function(texto) {
       this.$parent.$emit('setting', 'filtrarMovimentos', texto !== undefined)
@@ -645,8 +691,7 @@ export default {
     }
   },
 
-  components: {
-  }
+  components: {}
 }
 </script>
 
@@ -751,7 +796,7 @@ table.mov tr.encerramento_volumex {
 }
 
 .card-body p {
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
 }
 
 .card-body div {
@@ -759,6 +804,6 @@ table.mov tr.encerramento_volumex {
 }
 
 .card-body div h6 {
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
 }
 </style>
