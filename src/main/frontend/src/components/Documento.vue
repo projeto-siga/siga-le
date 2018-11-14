@@ -309,40 +309,45 @@ export default {
     },
 
     carregarDocumento: function() {
+      this.errormsg = undefined
       this.numero = this.$route.params.numero
       // Validar o número do processo
       Bus.$emit('block', 20)
       this.$http.get('doc/' + this.numero).then(
         response => {
           Bus.$emit('release')
-          this.doc = response.data
-          this.mob = this.doc.mobs[0]
-          if (this.$parent.test.properties['graphviz.url']) {
-            console.log('dotTramitacao: ' + this.doc.dotTramitacao)
-            this.$http
-              .post('http://localhost:8080/siga/public/app/graphviz/svg', 'digraph G { graph[tooltip="Tramitação"] ' + this.doc.dotTramitacao + '}', {
-                headers: { 'Content-Type': 'text/vnd.graphviz' }
-              })
-              .then(
-                response => {
-                  this.tramitacao = response.data.replace(
-                    /width="\d+pt" height="\d+pt"/gm,
-                    'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
-                  )
-                  this.tramitacao = this.tramitacao.replace(
-                    /<polygon fill="white".+?\/>/gm,
-                    ''
-                  )
-                  console.log('tramitacao: ' + this.tramitacao)
-                }
-              )
-          }
+          this.atualizarDocumento(response.data)
         },
         error => {
           Bus.$emit('release')
           UtilsBL.errormsg(error, this)
         }
       )
+    },
+
+    atualizarDocumento: function(data) {
+      this.doc = data
+      this.mob = this.doc.mobs[0]
+      if (this.doc.dotTramitacao && this.$parent.test.properties['graphviz.url']) {
+        // console.log('dotTramitacao: ' + this.doc.dotTramitacao)
+        this.$http
+          .post((location.port === '9090' ? 'http://localhost:8080' : '') + '/siga/public/app/graphviz/svg', 'digraph G { graph[tooltip="Tramitação"] ' + this.doc.dotTramitacao + '}', {
+            headers: { 'Content-Type': 'text/vnd.graphviz' }
+          })
+          .then(
+            response => {
+              this.tramitacao = response.data.replace(
+                /width="\d+pt" height="\d+pt"/gm,
+                'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
+              )
+              this.tramitacao = this.tramitacao.replace(
+                /<polygon fill="white".+?\/>/gm,
+                ''
+              )
+              // console.log('tramitacao: ' + this.tramitacao)
+            }
+          )
+      }
     },
 
     assinarComSenha: function() {
@@ -375,8 +380,7 @@ export default {
     reler: function() {
       this.$http.get('doc/' + this.numero, { block: true }).then(
         response => {
-          this.doc = response.data
-          this.mob = this.doc.mobs[0]
+          this.atualizarDocumento(response.data)
         },
         error => {
           UtilsBL.errormsg(error, this)

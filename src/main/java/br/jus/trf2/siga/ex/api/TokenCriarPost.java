@@ -41,10 +41,10 @@ public class TokenCriarPost implements ITokenCriarPost {
 			DpPessoa pessoa = null;
 
 			if (req.username == null || req.username.isEmpty())
-				throw new AplicacaoException("Matrícula não foi informada.");
+				throw new PresentableUnloggedException("Matrícula não foi informada.");
 
 			if (req.password == null || req.password.isEmpty())
-				throw new AplicacaoException("Senha não foi informada.");
+				throw new PresentableUnloggedException("Senha não foi informada.");
 
 			final String hashAtual = GeraMessageDigest.executaHash(
 					req.password.getBytes(), "MD5");
@@ -54,14 +54,14 @@ public class TokenCriarPost implements ITokenCriarPost {
 
 			// se o usuário não existir
 			if (id == null)
-				throw new AplicacaoException("O usuário não está cadastrado.");
+				throw new PresentableUnloggedException("O usuário não está cadastrado.");
 
 			pessoa = id.getDpPessoa().getPessoaAtual();
 
 			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
 
 			if (!senhaValida) {
-				throw new AplicacaoException("Senha inválida.");
+				throw new PresentableUnloggedException("Senha inválida.");
 			}
 
 			String jwt = jwt(origem, req.username.toUpperCase(),

@@ -8,6 +8,14 @@ import java.util.Map;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
+import com.crivano.swaggerservlet.PresentableUnloggedException;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -20,13 +28,6 @@ import br.jus.trf2.siga.ex.api.ISigaDoc.DocSiglaAssinarComSenhaPostRequest;
 import br.jus.trf2.siga.ex.api.ISigaDoc.DocSiglaAssinarComSenhaPostResponse;
 import br.jus.trf2.siga.ex.api.ISigaDoc.IDocSiglaAssinarComSenhaPost;
 import br.jus.trf2.siga.ex.api.TokenCriarPost.Usuario;
-
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 public class DocSiglaAssinarComSenhaPost implements
 		IDocSiglaAssinarComSenhaPost {
@@ -52,7 +53,7 @@ public class DocSiglaAssinarComSenhaPost implements
 
 				if (!Ex.getInstance().getComp()
 						.podeAssinarComSenha(titular, lotaTitular, mob))
-					throw new Exception("O documento " + req.sigla
+					throw new PresentableUnloggedException("O documento " + req.sigla
 							+ " não pode ser assinado com senha por "
 							+ titular.getSiglaCompleta() + "/"
 							+ lotaTitular.getSiglaCompleta());

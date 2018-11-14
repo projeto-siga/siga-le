@@ -110,7 +110,8 @@ var webpackConfig = merge(baseWebpackConfig, {
         filename: 'service-worker.js',
         minify: true,
         staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/],
-        navigateFallback: PUBLIC_PATH + 'index.html'
+        navigateFallback: PUBLIC_PATH + 'index.html',
+        navigateFallbackWhitelist: [/^index.html/]
       }
     ),
     new WebpackPwaManifest({

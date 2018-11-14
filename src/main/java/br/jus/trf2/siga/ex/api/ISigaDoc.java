@@ -3,6 +3,7 @@ package br.jus.trf2.siga.ex.api;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.crivano.swaggerservlet.ISwaggerMethod;
 import com.crivano.swaggerservlet.ISwaggerModel;
@@ -85,6 +86,7 @@ public interface ISigaDoc {
 
 		public Long contentlength;
 		public InputStream inputstream;
+		public Map<String, List<String>> headerFields;
 
 		public String getContenttype() {
 			return contenttype;
@@ -116,6 +118,16 @@ public interface ISigaDoc {
 
 		public void setInputstream(InputStream inputstream) {
 			this.inputstream = inputstream;
+		}
+
+		@Override
+		public Map<String, List<String>> getHeaderFields() {
+			return headerFields;
+		}
+
+		@Override
+		public void setHeaderFields(Map<String, List<String>> headerFields) {
+			this.headerFields = headerFields;
 		}
 	}
 
@@ -177,6 +189,7 @@ public interface ISigaDoc {
 
 		public Long contentlength;
 		public InputStream inputstream;
+		public Map<String, List<String>> headerFields;
 
 		public String getContenttype() {
 			return contenttype;
@@ -208,6 +221,16 @@ public interface ISigaDoc {
 
 		public void setInputstream(InputStream inputstream) {
 			this.inputstream = inputstream;
+		}
+		
+		@Override
+		public Map<String, List<String>> getHeaderFields() {
+			return headerFields;
+		}
+
+		@Override
+		public void setHeaderFields(Map<String, List<String>> headerFields) {
+			this.headerFields = headerFields;
 		}
 	}
 

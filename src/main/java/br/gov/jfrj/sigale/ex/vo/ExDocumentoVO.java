@@ -86,8 +86,6 @@ public class ExDocumentoVO extends ExVO {
 		this.sigla = doc.getSigla();
 		this.descrDocumento = doc.getDescrDocumento();
 
-		this.podeAssinar = Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)
-				&& !mob.doc().isAssinadoPelaPessoaComTokenOuSenha(titular);
 		this.exTipoDocumentoDescricao = doc.getExTipoDocumento().getDescricao();
 
 		if (!completo)
@@ -169,6 +167,15 @@ public class ExDocumentoVO extends ExVO {
 			}
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);
+
+			this.podeAssinar = Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)
+					&& !mob.doc().isAssinadoPelaPessoaComTokenOuSenha(titular);
+			
+			ExGraphTramitacao exGraphTramitacao = new ExGraphTramitacao(mob);
+			if (exGraphTramitacao.getNumNodos() > 1)
+				this.dotTramitacao = exGraphTramitacao.toString();
+			this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular).toString();
+			this.dotColaboracao = new ExGraphColaboracao(doc).toString();
 		}
 
 		// Desabilitado temporariamente
@@ -289,41 +296,31 @@ public class ExDocumentoVO extends ExVO {
 				mobilEspecifico = mobilVO;
 		}
 
-		// MarcasPorMobil desabilitado temporariamente
-		// for (ExMobil cadaMobil : doc.getExMobilSet()) {
-		// if (!cadaMobil.isGeral())
-		// marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
-		// }
-		//
-		// if (mobilEspecifico != null && mobilGeral != null) {
-		// mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
-		// mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
-		// mobilEspecifico.anexosNaoAssinados
-		// .addAll(mobilGeral.anexosNaoAssinados);
-		// for (ExMarca m : mobilGeral.getMarcasAtivas())
-		// if (marcasGeralPermitidas.contains(m.getCpMarcador()
-		// .getIdMarcador()))
-		// mobilEspecifico.getMarcasAtivas().add(m);
-		// for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
-		// if (marcasGeralPermitidas.contains(m.getCpMarcador()
-		// .getIdMarcador()))
-		// for (ExMobil cadaMobil : marcasPorMobil.keySet())
-		// marcasPorMobil.get(cadaMobil).add(m);
-		// mobs.remove(mobilGeral);
-		// }
-
-		// Edson: mostra lista de vias/volumes só se número de
-		// vias/volumes além do geral for > que 1 ou se o móbil
-		// tiver informações que não aparecem no topo da tela
-		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
-			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
-
-		ExGraphTramitacao exGraphTramitacao = new ExGraphTramitacao(mob);
-		if (exGraphTramitacao.getNumNodos() > 1)
-			this.dotTramitacao = exGraphTramitacao.toString();
-		this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular).toString();
-		this.dotColaboracao = new ExGraphColaboracao(doc).toString();
-
+		// MarcasPorMobil
+//		for (ExMobil cadaMobil : doc.getExMobilSet()) {
+//			if (!cadaMobil.isGeral())
+//				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
+//		}
+//
+//		if (mobilEspecifico != null && mobilGeral != null) {
+//			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
+//			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
+//			mobilEspecifico.anexosNaoAssinados.addAll(mobilGeral.anexosNaoAssinados);
+//			for (ExMarca m : mobilGeral.getMarcasAtivas())
+//				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
+//					mobilEspecifico.getMarcasAtivas().add(m);
+//			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
+//				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
+//					for (ExMobil cadaMobil : marcasPorMobil.keySet())
+//						marcasPorMobil.get(cadaMobil).add(m);
+//			mobs.remove(mobilGeral);
+//		}
+//
+//		// Edson: mostra lista de vias/volumes só se número de
+//		// vias/volumes além do geral for > que 1 ou se o móbil
+//		// tiver informações que não aparecem no topo da tela
+//		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
+//			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
 	}
 
 	/**

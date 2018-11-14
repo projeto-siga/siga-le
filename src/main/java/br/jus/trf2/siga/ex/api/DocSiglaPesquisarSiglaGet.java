@@ -19,6 +19,8 @@ public class DocSiglaPesquisarSiglaGet implements IDocSiglaPesquisarSiglaGet {
 			DpPessoa cadastrante = db.getPessoaPorPrincipal(u.usuario);
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(req.sigla);
+			if (flt.getIdOrgaoUsu() == null)
+				flt.setIdOrgaoUsu(cadastrante.getOrgaoUsuario().getIdOrgaoUsu());
 			ExMobil mob = db.consultarPorSigla(flt);
 			if (mob != null) {
 				resp.sigla = mob.getSigla();
