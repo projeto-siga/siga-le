@@ -7,34 +7,33 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.jus.trf2.siga.ex.api.ISigaDoc.ITokenCriarPost;
-import br.jus.trf2.siga.ex.api.ISigaDoc.TokenCriarPostRequest;
-import br.jus.trf2.siga.ex.api.ISigaDoc.TokenCriarPostResponse;
-
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 import com.auth0.jwt.internal.org.apache.commons.lang3.ArrayUtils;
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
+import com.crivano.swaggerservlet.SwaggerServlet;
+
+import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.jus.trf2.siga.ex.api.ISigaDoc.ITokenCriarPost;
+import br.jus.trf2.siga.ex.api.ISigaDoc.TokenCriarPostRequest;
+import br.jus.trf2.siga.ex.api.ISigaDoc.TokenCriarPostResponse;
 
 public class TokenCriarPost implements ITokenCriarPost {
 	@Override
-	public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp)
-			throws Exception {
+	public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception {
 
-		try (ExDB db = ExDB.create(false)) {
+		try (ExDB db = ExDB.create(true)) {
 			String usuariosRestritos = Utils.getUsuariosRestritos();
 			if (usuariosRestritos != null) {
-				if (!ArrayUtils.contains(usuariosRestritos.split(","),
-						req.username))
-					throw new PresentableUnloggedException(
-							"Usuário não autorizado.");
+				if (!ArrayUtils.contains(usuariosRestritos.split(","), req.username))
+					throw new PresentableUnloggedException("Usuário não autorizado.");
 			}
 
 			String origem = "int";
@@ -46,11 +45,9 @@ public class TokenCriarPost implements ITokenCriarPost {
 			if (req.password == null || req.password.isEmpty())
 				throw new PresentableUnloggedException("Senha não foi informada.");
 
-			final String hashAtual = GeraMessageDigest.executaHash(
-					req.password.getBytes(), "MD5");
+			final String hashAtual = GeraMessageDigest.executaHash(req.password.getBytes(), "MD5");
 
-			final CpIdentidade id = db.consultaIdentidadeCadastrante(
-					req.username.toUpperCase(), true);
+			final CpIdentidade id = db.consultaIdentidadeCadastrante(req.username.toUpperCase(), true);
 
 			// se o usuário não existir
 			if (id == null)
@@ -64,23 +61,27 @@ public class TokenCriarPost implements ITokenCriarPost {
 				throw new PresentableUnloggedException("Senha inválida.");
 			}
 
-			String jwt = jwt(origem, req.username.toUpperCase(),
-					Long.toString(pessoa.getCpfPessoa()),
+			String jwt = jwt(origem, req.username.toUpperCase(), Long.toString(pessoa.getCpfPessoa()),
 					pessoa.getNomePessoa(), pessoa.getEmailPessoaAtual());
-			verify(jwt);
+			Map<String, Object> decodedNewToken = verify(jwt);
+
+			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
+					(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
+					(Integer) decodedNewToken.get("exp"),
+					HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()));
+			db.commit();
+
 			resp.id_token = jwt;
 		}
 	}
 
-	private static Map<String, Object> verify(String jwt)
-			throws SwaggerAuthorizationException {
+	private static Map<String, Object> verify(String jwt) throws SwaggerAuthorizationException {
 		final JWTVerifier verifier = new JWTVerifier(Utils.getJwtSecret());
 		Map<String, Object> map;
 		try {
 			map = verifier.verify(jwt);
-		} catch (InvalidKeyException | NoSuchAlgorithmException
-				| IllegalStateException | SignatureException | IOException
-				| JWTVerifyException e) {
+		} catch (InvalidKeyException | NoSuchAlgorithmException | IllegalStateException | SignatureException
+				| IOException | JWTVerifyException e) {
 			throw new SwaggerAuthorizationException(e);
 		}
 		return map;
@@ -112,7 +113,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 		u.email = (String) jwt.get("email");
 		u.nome = (String) jwt.get("name");
 		u.cpf = (String) jwt.get("cpf");
-		u.usuario = (String) jwt.get("username");
+		u.usuario = (String) jwt.get("sub");
 		String users = (String) jwt.get("users");
 		if (users != null && users.length() > 0) {
 			u.usuarios = new HashMap<>();
@@ -129,33 +130,27 @@ public class TokenCriarPost implements ITokenCriarPost {
 		return u;
 	}
 
-	public static Map<String, Object> assertUsuarioAutorizado()
-			throws Exception {
+	public static Map<String, Object> assertUsuarioAutorizado() throws Exception {
 		String authorization = getAuthorizationHeader();
 		return verify(authorization);
 	}
 
-	private static String getAuthorizationHeader()
-			throws SwaggerAuthorizationException {
-		String authorization = SigaDocServlet.getHttpServletRequest()
-				.getHeader("Authorization");
+	private static String getAuthorizationHeader() throws SwaggerAuthorizationException {
+		String authorization = SigaDocServlet.getHttpServletRequest().getHeader("Authorization");
 		if (authorization == null)
-			throw new SwaggerAuthorizationException(
-					"Authorization header is missing");
+			throw new SwaggerAuthorizationException("Authorization header is missing");
 		if (authorization.startsWith("Bearer "))
 			authorization = authorization.substring(7);
 		return authorization;
 	}
 
-	public static String assertAuthorization()
-			throws SwaggerAuthorizationException {
+	public static String assertAuthorization() throws SwaggerAuthorizationException {
 		String authorization = getAuthorizationHeader();
 		verify(authorization);
 		return authorization;
 	}
 
-	private static String jwt(String origin, String username, String cpf,
-			String name, String email) {
+	private static String jwt(String origin, String username, String cpf, String name, String email) {
 		final String issuer = Utils.getJwtIssuer();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
@@ -170,7 +165,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 
 		if (origin != null)
 			claims.put("origin", origin);
-		claims.put("username", username);
+		claims.put("sub", username);
 		claims.put("cpf", cpf);
 		claims.put("name", name);
 		claims.put("email", email);

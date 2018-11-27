@@ -27,7 +27,7 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 	public void run(DownloadJwtFilenameGetRequest req,
 			DownloadJwtFilenameGetResponse resp) throws Exception {
 		Map<String, Object> map = verify(req.jwt);
-		String username = (String) map.get("username");
+		String username = (String) map.get("sub");
 		String sigla = (String) map.get("doc");
 		String type = (String) map.get("typ");
 		String disposition = "attachment".equals(req.disposition) ? "attachment"
@@ -88,7 +88,7 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 		claims.put("exp", exp);
 		claims.put("iat", iat);
 
-		claims.put("username", username);
+		claims.put("sub", username);
 		claims.put("doc", sigla);
 		claims.put("typ", "download");
 

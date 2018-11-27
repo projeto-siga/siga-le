@@ -40,10 +40,10 @@
               </ul>
 -->
 
-              <ul class="navbar-nav navbar-right" v-if="jwt &amp;&amp; jwt.username">
-                <li class="nav-item dropdown" v-if="jwt &amp;&amp; jwt.username">
+              <ul class="navbar-nav navbar-right" v-if="jwt &amp;&amp; jwt.sub">
+                <li class="nav-item dropdown" v-if="jwt &amp;&amp; jwt.sub">
                   <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span>{{jwt.username}}</span>
+                    <span>{{jwt.sub}}</span>
                   </a>
                   <div class="dropdown-menu logout" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" @click="logout">Logout</a>
@@ -132,7 +132,7 @@ export default {
         this.jwt = AuthBL.decodeToken(token)
         // $rootScope.updateLogged();
         // $state.go('consulta-processual');
-        this.$router.push({ name: 'Mesa' })
+        this.$router.push({name: 'Mesa', params: { exibirAcessoAnterior: true }})
       }
     })
 
@@ -202,7 +202,7 @@ export default {
           // This loads the Wootric survey
           // window.wootric_survey_immediately = true
           window.wootricSettings = {
-            email: this.jwt.username,
+            email: this.jwt.sub,
             account_token: this.test.properties['siga-le.wootric.token']
           }
           window.wootric('run')

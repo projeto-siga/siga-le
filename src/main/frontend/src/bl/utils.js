@@ -23,6 +23,14 @@ export default {
     return r
   },
 
+  formatJSDDMMYYYY_AS_HHMM: function (s) {
+    if (s === undefined) return
+
+    var r = this.formatJSDDMMYYYYHHMM(s)
+    r = r.replace('&nbsp;', ' às ')
+    return r
+  },
+
   convertString2DateYYYYMMDDHHMM: function (s) {
     if (s === undefined) return
 

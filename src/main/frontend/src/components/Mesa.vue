@@ -102,6 +102,9 @@
 					</table>
       </div>
     </div>
+    <p class="alert alert-success" v-if="acessos &amp;&amp; acessos.length >= 1">
+      Último acesso em {{acessos[1].datahora}} no endereço {{acessos[1].ip}}.
+    </p>
   </div>
 </template>
 
@@ -115,9 +118,11 @@ export default {
 
   mounted() {
     this.errormsg = undefined
+    console.log(this.$route)
 
     setTimeout(() => {
       this.carregarMesa()
+      if (this.$route.params.exibirAcessoAnterior) this.carregarAcessos()
     })
   },
 
@@ -129,6 +134,7 @@ export default {
       todos: true,
       carregando: false,
       primeiraCarga: true,
+      acessos: [],
       errormsg: undefined
     }
   },
@@ -214,6 +220,22 @@ export default {
         },
         error => {
           this.carregando = false
+          UtilsBL.errormsg(error, this)
+        }
+      )
+    },
+
+    carregarAcessos: function() {
+      this.acessos.length = 0
+      this.$http.get('acessos').then(
+        response => {
+          var list = response.data.list
+          for (var i = 0; i < list.length; i++) {
+            list[i].datahora = UtilsBL.formatJSDDMMYYYY_AS_HHMM(list[i].datahora)
+            this.acessos.push(list[i])
+          }
+        },
+        error => {
           UtilsBL.errormsg(error, this)
         }
       )

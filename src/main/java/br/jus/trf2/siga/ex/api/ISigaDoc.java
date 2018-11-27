@@ -26,6 +26,11 @@ public interface ISigaDoc {
 		public List<Marca> list;
 	}
 
+	public class AcessoItem implements ISwaggerModel {
+		public Date datahora;
+		public String ip;
+	}
+
 	public class Marca implements ISwaggerModel {
 		public String pessoa;
 		public String lotacao;
@@ -72,6 +77,18 @@ public interface ISigaDoc {
 
 	public interface IMesaGet extends ISwaggerMethod {
 		public void run(MesaGetRequest req, MesaGetResponse resp)
+				throws Exception;
+	}
+
+	public class AcessosGetRequest implements ISwaggerRequest {
+	}
+
+	public class AcessosGetResponse implements ISwaggerResponse {
+		public List<AcessoItem> list;
+	}
+
+	public interface IAcessosGet extends ISwaggerMethod {
+		public void run(AcessosGetRequest req, AcessosGetResponse resp)
 				throws Exception;
 	}
 
