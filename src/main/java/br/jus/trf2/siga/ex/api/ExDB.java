@@ -85,7 +85,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 
 	public static ExDB create(boolean transactional) {
 		if (emf == null)
-			emf = Persistence.createEntityManagerFactory("default-ex");
+			emf = Persistence.createEntityManagerFactory("default");
 
 		EntityManager em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
