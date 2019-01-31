@@ -269,6 +269,10 @@ public class MesaGet implements IMesaGet {
 		//
 		COMO_EXECUTOR(70, "Executor", "inbox", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
+		
+		//
+		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "key", "",
+				GrupoDeMarcadorEnum.A_ASSINAR),
 		//
 		URGENTE(1000, "Urgente", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
 
