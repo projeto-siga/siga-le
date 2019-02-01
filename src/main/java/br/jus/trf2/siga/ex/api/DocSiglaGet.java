@@ -37,8 +37,7 @@ import com.google.gson.stream.JsonWriter;
 public class DocSiglaGet implements IDocSiglaGet {
 
 	@Override
-	public void run(DocSiglaGetRequest req, DocSiglaGetResponse resp)
-			throws Exception {
+	public void run(DocSiglaGetRequest req, DocSiglaGetResponse resp) throws Exception {
 		String authorization = TokenCriarPost.assertAuthorization();
 		Usuario u = TokenCriarPost.assertUsuario();
 
@@ -55,10 +54,14 @@ public class DocSiglaGet implements IDocSiglaGet {
 			Utils.assertAcesso(mob, titular, lotaTitular);
 
 			// Recebimento automático
-			if (Ex.getInstance().getComp()
-					.podeReceberEletronico(titular, lotaTitular, mob)) {
-				Ex.getInstance().getBL()
-						.receber(cadastrante, lotaTitular, mob, new Date());
+			if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {
+				try {
+					db.upgradeToTransactional();
+					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
+					db.commit();
+				} catch (Exception ex) {
+					db.rollback(ex);
+				}
 			}
 
 			// Mostra o último volume de um processo ou a primeira via de um
@@ -72,8 +75,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 				}
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob,
-					cadastrante, titular, lotaTitular, true, false);
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
 
 			Type collectionType = new TypeToken<org.hibernate.proxy.HibernateProxy>() {
 			}.getType();
@@ -81,12 +83,10 @@ public class DocSiglaGet implements IDocSiglaGet {
 			// new OutroParametroSerializer())
 			// .setExclusionStrategies(new
 			// ConsultaProcessualExclStrat()).create();
-			Gson gson = new GsonBuilder().registerTypeAdapterFactory(
-					HibernateProxyTypeAdapter.FACTORY).create();
+			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create();
 			String json = gson.toJson(docVO);
 
-			resp.inputstream = new ByteArrayInputStream(
-					json.getBytes(StandardCharsets.UTF_8));
+			resp.inputstream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 			resp.contenttype = "application/json";
 		}
 
@@ -101,16 +101,14 @@ public class DocSiglaGet implements IDocSiglaGet {
 	 * This TypeAdapter unproxies Hibernate proxied objects, and serializes them
 	 * through the registered (or default) TypeAdapter of the base class.
 	 */
-	private static class HibernateProxyTypeAdapter extends
-			TypeAdapter<HibernateProxy> {
+	private static class HibernateProxyTypeAdapter extends TypeAdapter<HibernateProxy> {
 
 		public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
 			@Override
 			@SuppressWarnings("unchecked")
 			public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-				return (HibernateProxy.class
-						.isAssignableFrom(type.getRawType()) ? (TypeAdapter<T>) new HibernateProxyTypeAdapter(
-						gson) : null);
+				return (HibernateProxy.class.isAssignableFrom(type.getRawType())
+						? (TypeAdapter<T>) new HibernateProxyTypeAdapter(gson) : null);
 			}
 		};
 		private final Gson context;
@@ -126,8 +124,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
-		public void write(JsonWriter out, HibernateProxy value)
-				throws IOException {
+		public void write(JsonWriter out, HibernateProxy value) throws IOException {
 			if (value == null) {
 				out.nullValue();
 				return;
@@ -138,8 +135,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 			// serialization
 			TypeAdapter delegate = context.getAdapter(TypeToken.get(baseType));
 			// Get a filled instance of the original class
-			Object unproxiedValue = ((HibernateProxy) value)
-					.getHibernateLazyInitializer().getImplementation();
+			Object unproxiedValue = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
 			// Serialize the value
 			// delegate.write(out, unproxiedValue);
 			delegate.write(out, "__OMITIDO__");

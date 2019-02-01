@@ -109,6 +109,13 @@ public class ExDB extends ExDao implements AutoCloseable {
 			em.getTransaction().begin();
 		return db;
 	}
+	
+	public void upgradeToTransactional() {
+		if (transactional)
+			return;
+		ContextoPersistencia.em().getTransaction().begin();
+		transactional = true;
+	}
 
 	@Override
 	public void close() throws Exception {
