@@ -67,8 +67,10 @@ public class ExMobilVO extends ExVO {
 	boolean ocultar;
 	Long id;
 	boolean podeTramitar;
+	boolean podeAnotar;
 	String marcadoresEmHtml;
 	String descricaoCompleta;
+
 
 	public List<ExMovimentacaoVO> getMovs() {
 		return movs;
@@ -98,6 +100,7 @@ public class ExMobilVO extends ExVO {
 		this.id = mob.getId();
 
 		this.podeTramitar = Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob);
+		this.podeAnotar = Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, mob);
 
 		if (!completo || mob.isEliminado())
 			return;

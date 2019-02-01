@@ -21,15 +21,15 @@
         </div>
       </div>
       <div class="col col-auto ml-auto">
-        <button v-if="(filtrados||[]).length" type="button" @click="anotarEmLote()" class="btn btn-primary mt-3" title="">
+        <button v-if="(filtradosEMarcadosEAnotaveis||[]).length" type="button" @click="anotarEmLote()" class="btn btn-primary mt-3" title="">
           <span class="fa fa-sticky-note-o d-none d-md-inline"></span> Anotar&nbsp;
-          <span class="badge badge-pill badge-warning">{{filtradosEMarcados.length}}</span>
+          <span class="badge badge-pill badge-warning">{{filtradosEMarcadosEAnotaveis.length}}</span>
         </button>
-        <button v-if="(filtradosEAssinaveis||[]).length" type="button" @click="assinarComSenhaEmLote()" class="btn btn-primary mt-3" title="">
+        <button v-if="(filtradosEMarcadosEAssinaveis||[]).length" type="button" @click="assinarComSenhaEmLote()" class="btn btn-primary mt-3" title="">
           <span class="fa fa-shield d-none d-md-inline"></span> Assinar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosEAssinaveis.length}}</span>
         </button>
-        <button v-if="(filtradosETramitaveis||[]).length" type="button" @click="tramitarEmLote()" class="btn btn-primary mt-3" title="">
+        <button v-if="(filtradosEMarcadosETramitaveis||[]).length" type="button" @click="tramitarEmLote()" class="btn btn-primary mt-3" title="">
           <span class="fa fa-paper-plane-o d-none d-md-inline"></span> Tramitar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosETramitaveis.length}}</span>
         </button>
@@ -167,20 +167,36 @@ export default {
       return false
     },
 
+    filtradosEAnotaveis: function() {
+      return this.filtrados.filter(function(item) {
+        return !item.sigla.startsWith('TMP-')
+      })
+    },
+
     filtradosEAssinaveis: function() {
       return this.filtrados.filter(function(item) {
-        return item.grupo === 'A_ASSINAR'
+        if (item.list) {
+          for (var i = 0; i < item.list.length; i++) {
+            if (item.list[i].nome === 'Como Subscritor' || item.list[i].nome === 'Pronto para Assinar' || item.list[i].nome === 'A Revisar') return true
+          }
+        }
+        return false
       })
     },
 
     filtradosETramitaveis: function() {
       return this.filtrados.filter(function(item) {
-        return item.grupo === 'AGUARDANDO_ANDAMENTO'
+        if (item.list) {
+          for (var i = 0; i < item.list.length; i++) {
+            if (item.list[i].nome === 'Aguardando Andamento') return true
+          }
+        }
+        return false
       })
     },
 
-    filtradosEMarcados: function() {
-      return this.filtrados.filter(function(item) {
+    filtradosEMarcadosEAnotaveis: function() {
+      return this.filtradosEAnotaveis.filter(function(item) {
         return item.checked
       })
     },

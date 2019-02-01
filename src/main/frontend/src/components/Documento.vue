@@ -41,13 +41,13 @@
                       </button>
                     </div>
                     -->
-                <div class="col col-auto mb-3">
+                <div class="col col-auto mr-auto mb-3">
                     <button type="button" @click="mostrarCompleto()" id="download" class="btn btn-info d-print-none">
                     <span class="fa fa-download"></span>
                     PDF
                     </button>
                 </div>
-                <div class="col col-auto ml-auto mr-1 mb-3">
+                <div class="col col-auto mr-1 mb-3" v-if="mob.podeAnotar">
                     <button type="button" @click="anotar()" class="btn btn-primary d-print-none">
                     <span class="fa fa-sticky-note-o"></span>
                     Anotar
