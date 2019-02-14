@@ -64,7 +64,7 @@
 							</tr>
 							<tr v-if="f.grupoExibir" class="table-head">
               <th style="text-align: center">
-                <input type="checkbox" id="progress_checkall" name="progress_checkall" v-model="todos" @change="marcarTodos()"></input>
+                <input type="checkbox" id="progress_checkall" name="progress_checkall" v-model="todos[f.grupo]" @change="marcarTodos(f.grupo)"></input>
               </th>
 								<th class="d-none d-md-block">Tempo</th>
 								<th>Código</th>
@@ -131,7 +131,7 @@ export default {
       mesa: undefined,
       filtro: undefined,
       lista: [],
-      todos: true,
+      todos: {},
       carregando: false,
       primeiraCarga: true,
       acessos: [],
@@ -259,7 +259,7 @@ export default {
 
     fixItem: function(item) {
       UtilsBL.applyDefauts(item, {
-        checked: true,
+        checked: false,
         disabled: false,
         grupo: undefined,
         grupoNome: undefined,
@@ -297,11 +297,11 @@ export default {
       Bus.$emit('iniciarTramite', a, this.carregarMesa)
     },
 
-    marcarTodos: function() {
+    marcarTodos: function(grupo) {
       var docs = this.filtrados
       for (var i = 0; i < docs.length; i++) {
         var doc = docs[i]
-        doc.checked = this.todos
+        if (doc.grupo === grupo) doc.checked = this.todos[grupo]
       }
     },
 
