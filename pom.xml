@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.jus.trf2</groupId>
 	<artifactId>siga-le</artifactId>
-	<version>1.0.13</version>
+	<version>1.0.14</version>
 	<packaging>war</packaging>
 	<name>Siga Single Page Web Application</name>
 	<url>http://maven.apache.org</url>
