@@ -17,7 +17,10 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
+                <li class="nav-item" v-if="!(jwt &amp;&amp; jwt.sub)">
+                  <router-link class="nav-link" active-class="active" :to="{name:'Login'}" tag="a">Login</router-link>
+                </li>
+                <li class="nav-item" v-if="jwt &amp;&amp; jwt.sub">
                   <router-link class="nav-link" active-class="active" :to="{name:'Mesa'}" tag="a">Mesa</router-link>
                 </li>
                 <li class="nav-item">
