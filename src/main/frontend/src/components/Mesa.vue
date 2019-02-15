@@ -288,7 +288,7 @@ export default {
     },
 
     anotarEmLote: function() {
-      var a = this.filtradosEMarcados
+      var a = this.filtradosEMarcadosEAnotaveis
       Bus.$emit('iniciarAnotacao', a)
     },
 
