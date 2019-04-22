@@ -316,19 +316,6 @@ public class Utils {
 		return Double.parseDouble(s);
 	}
 
-	public static String calcularTempoRelativo(Date anterior) {
-		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
-
-		String tempo = p.format(anterior);
-		tempo = tempo.replace(" atrás", "");
-		tempo = tempo.replace(" dias", " dias");
-		tempo = tempo.replace(" horas", "h");
-		tempo = tempo.replace(" minutos", "min");
-		tempo = tempo.replace(" segundos", "s");
-		tempo = tempo.replace("agora há pouco", "agora");
-		return tempo;
-	}
-
 	public static void assertAcesso(final ExMobil mob, DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
 		if (!Ex.getInstance().getComp()

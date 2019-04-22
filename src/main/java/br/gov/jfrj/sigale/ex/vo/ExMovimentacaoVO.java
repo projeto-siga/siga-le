@@ -59,7 +59,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -67,10 +71,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
-import br.jus.trf2.siga.ex.api.Utils;
-
-import com.auth0.jwt.JWTSigner;
-import com.auth0.jwt.JWTVerifier;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -108,7 +108,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		this.idMov = mov.getIdMov();
 		this.dtRegMovDDMMYYHHMMSS = mov.getDtRegMovDDMMYYHHMMSS();
-		this.tempoRelativo = Utils.calcularTempoRelativo(mov.getDtIniMov());
+		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
 		this.lotaCadastranteSigla = mov.getLotaCadastrante().getSigla();
