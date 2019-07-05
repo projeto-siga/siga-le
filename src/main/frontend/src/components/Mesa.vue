@@ -168,31 +168,15 @@ export default {
     },
 
     filtradosEAnotaveis: function() {
-      return this.filtrados.filter(function(item) {
-        return !item.sigla.startsWith('TMP-')
-      })
+      return this.filtrados.filter(item => item.podeAnotar)
     },
 
     filtradosEAssinaveis: function() {
-      return this.filtrados.filter(function(item) {
-        if (item.list) {
-          for (var i = 0; i < item.list.length; i++) {
-            if (item.list[i].nome === 'Como Subscritor' || item.list[i].nome === 'Pronto para Assinar' || item.list[i].nome === 'A Revisar') return true
-          }
-        }
-        return false
-      })
+      return this.filtrados.filter(item => item.podeAssinar)
     },
 
     filtradosETramitaveis: function() {
-      return this.filtrados.filter(function(item) {
-        if (item.list) {
-          for (var i = 0; i < item.list.length; i++) {
-            if (item.list[i].nome === 'Aguardando Andamento') return true
-          }
-        }
-        return false
-      })
+      return this.filtrados.filter(item => item.podeTramitar)
     },
 
     filtradosEMarcadosEAnotaveis: function() {

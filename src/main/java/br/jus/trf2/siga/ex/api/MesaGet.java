@@ -13,6 +13,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.jus.trf2.siga.ex.api.ISigaDoc.IMesaGet;
 import br.jus.trf2.siga.ex.api.ISigaDoc.Marca;
 import br.jus.trf2.siga.ex.api.ISigaDoc.MesaGetRequest;
@@ -326,6 +328,11 @@ public class MesaGet implements IMesaGet {
 			r.grupo = GrupoDeMarcadorEnum.NENHUM.name();
 			r.grupoOrdem = Integer.toString(GrupoDeMarcadorEnum.valueOf(r.grupo).ordinal());
 			r.grupoNome = GrupoDeMarcadorEnum.valueOf(r.grupo).nome;
+			
+			ExCompetenciaBL comp = Ex.getInstance().getComp();
+			r.podeAnotar = comp.podeFazerAnotacao(pessoa, unidade, mobil);
+			r.podeAssinar = comp.podeAssinar(pessoa, unidade, mobil);
+			r.podeTramitar = comp.podeTransferir(pessoa, unidade, mobil);
 
 			r.list = new ArrayList<ISigaDoc.Marca>();
 
