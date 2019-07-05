@@ -23,6 +23,10 @@ public interface ISigaDoc {
 		public String grupo;
 		public String grupoNome;
 		public String grupoOrdem;
+		public Boolean podeAnotar;
+		public Boolean podeAssinar;
+		public Boolean podeAssinarEmLote;
+		public Boolean podeTramitar;
 		public List<Marca> list;
 	}
 

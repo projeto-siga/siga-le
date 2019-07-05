@@ -33,6 +33,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
@@ -147,8 +148,9 @@ public class ExDocumentoVO extends ExVO {
 			this.fDigital = false;
 		}
 
+		ExCompetenciaBL comp = Ex.getInstance().getComp();
 		for (ExMovimentacao movCossig : doc.getMovsCosignatario())
-			cossignatarios.put(movCossig, Ex.getInstance().getComp().podeExcluirCosignatario(titular, lotaTitular,
+			cossignatarios.put(movCossig, comp.podeExcluirCosignatario(titular, lotaTitular,
 					doc.getMobilGeral(), movCossig));
 
 		this.forma = doc.getExFormaDocumento() != null ? doc.getExFormaDocumento().getDescricao() : "";
@@ -168,8 +170,8 @@ public class ExDocumentoVO extends ExVO {
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);
 
-			this.podeAssinar = Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)
-					&& !mob.doc().isAssinadoPelaPessoaComTokenOuSenha(titular);
+			this.podeAssinar = comp.podeAssinar(titular, lotaTitular, mob) 
+					&& comp.podeAssinarComSenha(titular, lotaTitular, mob);
 			
 			ExGraphTramitacao exGraphTramitacao = new ExGraphTramitacao(mob);
 			if (exGraphTramitacao.getNumNodos() > 1)
