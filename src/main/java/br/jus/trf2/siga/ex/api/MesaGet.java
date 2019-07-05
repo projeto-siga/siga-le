@@ -27,6 +27,9 @@ public class MesaGet implements IMesaGet {
 	}
 
 	public enum GrupoDeMarcadorEnum {
+		//
+		PRONTO_PARA_ASSINAR("Pronto para Assinar", "inbox"),
+		//
 		ALERTA("Alertas", "hourglass-end"),
 		//
 		A_ASSINAR("Pendente de Assinatura", "inbox"),
@@ -214,7 +217,7 @@ public class MesaGet implements IMesaGet {
 		//
 		COMO_EXECUTOR(70, "Executor", "inbox", "", GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
-		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "key", "", GrupoDeMarcadorEnum.A_ASSINAR),
+		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "key", "", GrupoDeMarcadorEnum.PRONTO_PARA_ASSINAR),
 		//
 		URGENTE(1000, "Urgente", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
 
@@ -257,7 +260,7 @@ public class MesaGet implements IMesaGet {
 	}
 
 	private static class MeM {
-		ExMarca marca;;
+		ExMarca marca;
 		CpMarcador marcador;
 	}
 
@@ -268,7 +271,7 @@ public class MesaGet implements IMesaGet {
 
 		try (ExDB db = ExDB.create(false)) {
 			DpPessoa cadastrante = db.getPessoaPorPrincipal(u.usuario);
-
+			
 			List<Object[]> l = db.listarDocumentosPorPessoaOuLotacao(cadastrante, cadastrante.getLotacao());
 
 			HashMap<ExMobil, List<MeM>> map = new HashMap<>();
