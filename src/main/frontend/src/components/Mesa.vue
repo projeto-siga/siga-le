@@ -172,7 +172,7 @@ export default {
     },
 
     filtradosEAssinaveis: function() {
-      return this.filtrados.filter(item => item.podeAssinar)
+      return this.filtrados.filter(item => item.podeAssinarEmLote)
     },
 
     filtradosETramitaveis: function() {

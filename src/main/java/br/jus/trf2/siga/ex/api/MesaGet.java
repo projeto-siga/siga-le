@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -332,6 +333,10 @@ public class MesaGet implements IMesaGet {
 			ExCompetenciaBL comp = Ex.getInstance().getComp();
 			r.podeAnotar = comp.podeFazerAnotacao(pessoa, unidade, mobil);
 			r.podeAssinar = comp.podeAssinar(pessoa, unidade, mobil);
+			
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pessoa, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			
+			r.podeAssinarEmLote = apenasComSolicitacaoDeAssinatura ? r.podeAssinar && mobil.doc().isAssinaturaSolicitada() : r.podeAssinar;
 			r.podeTramitar = comp.podeTransferir(pessoa, unidade, mobil);
 
 			r.list = new ArrayList<ISigaDoc.Marca>();

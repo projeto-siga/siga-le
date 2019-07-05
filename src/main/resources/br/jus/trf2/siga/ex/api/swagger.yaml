@@ -483,6 +483,8 @@ definitions:
         type: boolean
       podeAssinar:
         type: boolean
+      podeAssinarEmLote:
+        type: boolean
       podeTramitar:
         type: boolean
       list:
