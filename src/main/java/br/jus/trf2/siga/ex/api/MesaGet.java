@@ -86,8 +86,6 @@ public class MesaGet implements IMesaGet {
 		//
 		JUNTADO(9, "Juntado", "lock", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		JUNTADO_EXTERNO(16, "Juntado Externo", "lock", "", GrupoDeMarcadorEnum.OUTROS),
-		//
 		CANCELADO(10, "Cancelado", "ban", "", GrupoDeMarcadorEnum.OUTROS),
 		//
 		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "inbox", "", GrupoDeMarcadorEnum.OUTROS),
@@ -101,7 +99,7 @@ public class MesaGet implements IMesaGet {
 		//
 		PENDENTE_DE_ASSINATURA(15, "Pendente de Assinatura", "key", "", GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "inbox", "", GrupoDeMarcadorEnum.OUTROS),
+		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "lock", "", GrupoDeMarcadorEnum.OUTROS),
 		//
 		A_REMETER_PARA_PUBLICACAO(17, "A Remeter para Publicação", "inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
@@ -221,6 +219,8 @@ public class MesaGet implements IMesaGet {
 		COMO_EXECUTOR(70, "Executor", "inbox", "", GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
 		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "key", "", GrupoDeMarcadorEnum.PRONTO_PARA_ASSINAR),
+		//
+		COMO_REVISOR(72, "Como Revisor", "key", "", GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		URGENTE(1000, "Urgente", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
 
