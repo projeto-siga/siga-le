@@ -72,6 +72,12 @@ public class TokenCriarPost implements ITokenCriarPost {
 			db.commit();
 
 			resp.id_token = jwt;
+		} catch (PresentableUnloggedException ex) {
+			throw ex;
+		} catch (SwaggerAuthorizationException ex) {
+			throw new PresentableUnloggedException(ex.getMessage(), ex);
+		} catch (Throwable ex) {
+			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}
 	}
 
