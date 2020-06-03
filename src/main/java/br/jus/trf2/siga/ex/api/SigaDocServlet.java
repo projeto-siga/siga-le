@@ -21,8 +21,6 @@ public class SigaDocServlet extends SwaggerServlet {
 		addPublicProperty("wootric.token", null);
 		addPublicProperty("graphviz.url");
 
-		addPrivateProperty("jwt.secret");
-
 		addRestrictedProperty("smtp.remetente");
 		addRestrictedProperty("smtp.host");
 		addRestrictedProperty("smtp.host.alt", null);
@@ -30,15 +28,13 @@ public class SigaDocServlet extends SwaggerServlet {
 		addRestrictedProperty("smtp.auth.usuario", null);
 		addPrivateProperty("smtp.auth.senha", null);
 		addRestrictedProperty("smtp.porta", "25");
-		addRestrictedProperty("smtp.destinatario");
-		addRestrictedProperty("smtp.assunto");
+		addPublicProperty("smtp.sugestao.destinatario");
+		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
 
 		addPublicProperty("username.restriction", null);
-		addPublicProperty("jwt.issuer");
-		addPublicProperty("jwt.secret");
+		addPublicProperty("jwt.issuer", "trf2.jus.br");
+		addPrivateProperty("jwt.secret");
 
-		addPublicProperty("sugestao.smtp.destinatario");
-		addPublicProperty("sugestao.smtp.assunto", "Siga-Le: Sugestão");
 		addPublicProperty("assijus.endpoint");
 	}
 
