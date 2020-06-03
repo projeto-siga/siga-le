@@ -328,7 +328,7 @@ export default {
     atualizarDocumento: function(data) {
       this.doc = data
       this.mob = this.doc.mobs[0]
-      if (this.doc.dotTramitacao && this.$parent.test.properties['graphviz.url']) {
+      if (this.doc.dotTramitacao && this.$parent.test.properties['siga-le.graphviz.url']) {
         // console.log('dotTramitacao: ' + this.doc.dotTramitacao)
         this.$http
           .post((location.port === '9090' ? 'http://localhost:8080' : '') + '/siga/public/app/graphviz/svg', 'digraph G { graph[tooltip="Tramitação"] ' + this.doc.dotTramitacao + '}', {

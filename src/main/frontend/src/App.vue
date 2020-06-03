@@ -5,7 +5,7 @@
         <!--=== Header ===-->
         <div class="header d-print-none">
           <!-- Navbar -->
-          <nav class="navbar navbar navbar-expand-lg navbar-light" :class="{'navbar-dark bg-success': test.properties['siga.ex.api.env'] === 'desenv', 'navbar-dark bg-secondary': test.properties['siga.ex.api.env'] === 'homolo', 'navbar-dark bg-primary': test.properties['siga.ex.api.env'] === 'prod'}">
+          <nav class="navbar navbar navbar-expand-lg navbar-light" :class="{'navbar-dark bg-success': test.properties['siga-le.env'] === 'desenv', 'navbar-dark bg-secondary': test.properties['siga-le.env'] === 'homolo', 'navbar-dark bg-primary': test.properties['siga-le.env'] === 'prod'}">
             <a class="navbar-brand pt-0 pb-0" href="#/mesa">
               <img id="logo-header" src="./assets/logo-siga-novo-38px.png" alt="Siga-Le" height="38"></img>
               <img class="ml-2" id="logo-header2" src="./assets/trf2-38px-2.png" alt="Logo TRF2" height="38"></img>
@@ -199,8 +199,7 @@ export default {
       this.$http.get('test?skip=all').then(response => {
         this.test = response.data
 
-        if (this.test.properties['.wootric.token'] &&
-          this.test.properties['siga-le.wootric.token'] !== '[undefined]' &&
+        if (this.test.properties['siga-le.wootric.token'] !== '[undefined]' &&
           this.jwt) {
           // This loads the Wootric survey
           // window.wootric_survey_immediately = true

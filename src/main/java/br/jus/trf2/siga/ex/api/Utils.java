@@ -13,6 +13,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import com.crivano.swaggerservlet.SwaggerServlet;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -20,90 +22,11 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
-import com.crivano.swaggerservlet.SwaggerUtils;
-
 public class Utils {
-	public static String getOrgaos() {
-		try {
-			return SwaggerUtils
-					.getRequiredProperty(
-							"siga.ex.api.orgaos",
-							"Não foi possível localizar propriedade que configure a lista de órgãos.",
-							false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
-	public static String getMniWsdlUrl(String orgao) {
-		try {
-			return SwaggerUtils
-					.getRequiredProperty(
-							"siga.ex.api.mni." + orgao.toLowerCase() + ".url",
-							"Não foi possível localizar propriedade que configure a URL do MNI: "
-									+ "siga.ex.api.mni." + orgao.toLowerCase()
-									+ ".url", false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
-	public static String getWsProcessualUrl() {
-		try {
-			return SwaggerUtils
-					.getRequiredProperty(
-							"siga.ex.api.ws.processual.url",
-							"Não foi possível localizar a propridade que configura a URL do webservice de integração com o sistema processual.",
-							false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
-	public static String getWsDocumentalUrl() {
-		try {
-			return SwaggerUtils
-					.getRequiredProperty(
-							"siga.ex.api.ws.documental.url",
-							"Não foi possível localizar a propridade que configura a URL do webservice documental.",
-							false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
-	public static String getDirTemp() {
-		try {
-			return SwaggerUtils.getRequiredProperty(
-					"siga.ex.api.upload.dir.temp",
-					"Não foi configurado o diretório temporário dos PDFs",
-					false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
-	public static String getDirFinal() {
-		try {
-			return SwaggerUtils.getRequiredProperty(
-					"siga.ex.api.upload.dir.final",
-					"Não foi configurado o diretório de destino dos PDFs",
-					false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
 
 	public static String getUsuariosRestritos() {
 		try {
-			return SwaggerUtils.getProperty("siga.ex.api.username.restriction",
-					null);
+			return SwaggerServlet.getProperty("username.restriction");
 		} catch (Exception e) {
 			throw new RuntimeException("Erro de configuração", e);
 		}
@@ -111,50 +34,17 @@ public class Utils {
 	}
 
 	public static String getJwtIssuer() {
-		return "siga.ex.api.trf2.jus.br";
+		return "jwt.issuer";
 	}
 
 	public static String getJwtSecret() {
-		return SwaggerUtils.getProperty("siga.ex.api.jwt.secret", null);
-	}
-
-	public static String getAssijusEndpoint() {
-		try {
-			return SwaggerUtils.getRequiredProperty(
-					"siga.ex.api.assijus.endpoint",
-					"Não foi configurada a URL do Assijus", false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-	}
-
-	public static String getAssijusSystemMovimentos() {
-		try {
-			return SwaggerUtils.getRequiredProperty(
-					"siga.ex.api.assijus.system.movimentos",
-					"Não foi configurada o sistema de movimentos do Assijus",
-					false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-	}
-
-	public static String getAssijusSystemExpedientes() {
-		try {
-			return SwaggerUtils.getRequiredProperty(
-					"siga.ex.api.assijus.system.expedientes",
-					"Não foi configurada o sistema de expedientes do Assijus",
-					false);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
+		return SwaggerServlet.getProperty("jwt.secret");
 	}
 
 	/**
 	 * Remove os acentos da string
 	 * 
-	 * @param acentuado
-	 *            - String acentuada
+	 * @param acentuado - String acentuada
 	 * @return String sem acentos
 	 */
 	public static String removeAcento(String acentuado) {
@@ -182,8 +72,7 @@ public class Utils {
 		return s.replace("-", "").replace(".", "").replace("/", "");
 	}
 
-	private static final DateTimeFormatter dtfMNI = DateTimeFormat
-			.forPattern("yyyyMMddHHmmss");
+	private static final DateTimeFormatter dtfMNI = DateTimeFormat.forPattern("yyyyMMddHHmmss");
 
 	public static String formatarApoloDataHoraMinuto(Date d) {
 		DateTime dt = new DateTime(d.getTime());
@@ -197,8 +86,7 @@ public class Utils {
 		return dt.toDate();
 	}
 
-	private static final DateTimeFormatter dtfBRHHMM = DateTimeFormat
-			.forPattern("dd/MM/yyyy HH:mm");
+	private static final DateTimeFormatter dtfBRHHMM = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
 
 	public static String formatarDataHoraMinuto(Date d) {
 		DateTime dt = new DateTime(d.getTime());
@@ -212,8 +100,7 @@ public class Utils {
 		return dt.toDate();
 	}
 
-	private static final DateTimeFormatter dtfBRHHMMSS = DateTimeFormat
-			.forPattern("dd/MM/yyyy HH:mm:ss");
+	private static final DateTimeFormatter dtfBRHHMMSS = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
 
 	public static String formatarDataHoraMinutoSegundo(Date d) {
 		DateTime dt = new DateTime(d.getTime());
@@ -227,8 +114,7 @@ public class Utils {
 		return dt.toDate();
 	}
 
-	private static final DateTimeFormatter dtfBR = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter dtfBR = DateTimeFormat.forPattern("dd/MM/yyyy");
 
 	public static String formatarData(Date d) {
 		DateTime dt = new DateTime(d.getTime());
@@ -243,8 +129,7 @@ public class Utils {
 		return dt.toDate();
 	}
 
-	private static final DateTimeFormatter dtfJPHHMMSS = DateTimeFormat
-			.forPattern("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter dtfJPHHMMSS = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
 	public static Date parsearDataHoraFormatoJapones(String s) {
 		if (s == null)
@@ -256,10 +141,8 @@ public class Utils {
 	public static String formatarNumeroProcesso(String numProc) {
 		String numProcFormated = numProc;
 		try {
-			numProcFormated = numProc
-					.replaceAll(
-							"^(\\d{7})-?(\\d{2})\\.?(\\d{4})\\.?(4)\\.?(02)\\.?(\\d{4})(\\d{2})?",
-							"$1-$2.$3.$4.$5.$6$7");
+			numProcFormated = numProc.replaceAll("^(\\d{7})-?(\\d{2})\\.?(\\d{4})\\.?(4)\\.?(02)\\.?(\\d{4})(\\d{2})?",
+					"$1-$2.$3.$4.$5.$6$7");
 		} catch (Exception ex) {
 		}
 		return numProcFormated;
@@ -329,15 +212,12 @@ public class Utils {
 		return tempo;
 	}
 
-	public static void assertAcesso(final ExMobil mob, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
-		if (!Ex.getInstance().getComp()
-				.podeAcessarDocumento(titular, lotaTitular, mob)) {
+	public static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
 			String s = "";
 			s += mob.doc().getListaDeAcessosString();
 			s = "(" + s + ")";
-			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso()
-					+ " " + s;
+			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			Map<ExPapel, List<Object>> mapa = mob.doc().getPerfis();
 			boolean isInteressado = false;
@@ -345,28 +225,23 @@ public class Utils {
 			for (ExPapel exPapel : mapa.keySet()) {
 				Iterator<Object> it = mapa.get(exPapel).iterator();
 
-				if ((exPapel != null)
-						&& (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
+				if ((exPapel != null) && (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
 					while (it.hasNext() && !isInteressado) {
 						Object item = it.next();
-						isInteressado = item.toString().equals(
-								titular.getSigla()) ? true : false;
+						isInteressado = item.toString().equals(titular.getSigla()) ? true : false;
 					}
 				}
 
 			}
 
 			if (mob.doc().isSemEfeito()) {
-				if (!mob.doc().getCadastrante().equals(titular)
-						&& !mob.doc().getSubscritor().equals(titular)
+				if (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
 						&& !isInteressado) {
-					throw new AplicacaoException("Documento " + mob.getSigla()
-							+ " cancelado ");
+					throw new AplicacaoException("Documento " + mob.getSigla() + " cancelado ");
 				}
 			} else {
-				throw new AplicacaoException("Documento " + mob.getSigla()
-						+ " inacessível ao usuário " + titular.getSigla() + "/"
-						+ lotaTitular.getSiglaCompleta() + "." + s);
+				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
+						+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + "." + s);
 			}
 		}
 	}

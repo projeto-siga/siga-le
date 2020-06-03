@@ -1,85 +1,50 @@
 package br.jus.trf2.siga.ex.api;
 
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import br.jus.trf2.siga.ex.api.TokenCriarPost.Usuario;
-
 import com.crivano.swaggerservlet.SwaggerServlet;
-import com.crivano.swaggerservlet.SwaggerUtils;
-import com.crivano.swaggerservlet.dependency.TestableDependency;
-import com.crivano.swaggerservlet.property.PrivateProperty;
-import com.crivano.swaggerservlet.property.PublicProperty;
-import com.crivano.swaggerservlet.property.RestrictedProperty;
+
+import br.jus.trf2.siga.ex.api.TokenCriarPost.Usuario;
 
 public class SigaDocServlet extends SwaggerServlet {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+	public void initialize(ServletConfig config) throws ServletException {
 
 		super.setAPI(ISigaDoc.class);
 
 		super.setActionPackage("br.jus.trf2.siga.ex.api");
 
-		super.addProperty(new PublicProperty("siga.ex.api.env"));
-		super.addProperty(new PublicProperty("siga.ex.api.wootric.token"));
-		super.addProperty(new PublicProperty("graphviz.url"));
+		addPublicProperty("env");
+		addPublicProperty("wootric.token", null);
+		addPublicProperty("graphviz.url");
 
-		super.addProperty(new PrivateProperty("siga.ex.api.jwt.secret"));
+		addPrivateProperty("jwt.secret");
 
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.remetente"));
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.host"));
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.host.alt"));
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.auth"));
-		super.addProperty(new RestrictedProperty(
-				"siga.ex.api.smtp.auth.usuario"));
-		super.addProperty(new PrivateProperty("siga.ex.api.smtp.auth.senha"));
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.porta"));
-		super.addProperty(new RestrictedProperty(
-				"siga.ex.api.smtp.destinatario"));
-		super.addProperty(new RestrictedProperty("siga.ex.api.smtp.assunto"));
+		addRestrictedProperty("smtp.remetente");
+		addRestrictedProperty("smtp.host");
+		addRestrictedProperty("smtp.host.alt", null);
+		addRestrictedProperty("smtp.auth", "false");
+		addRestrictedProperty("smtp.auth.usuario", null);
+		addPrivateProperty("smtp.auth.senha", null);
+		addRestrictedProperty("smtp.porta", "25");
+		addRestrictedProperty("smtp.destinatario");
+		addRestrictedProperty("smtp.assunto");
 
-		super.setAuthorizationToProperties(SwaggerUtils.getProperty(
-				"siga.ex.api.properties.secret", null));
+		addPublicProperty("username.restriction", null);
+		addPublicProperty("jwt.issuer");
+		addPublicProperty("jwt.secret");
 
-		// addDependency(new TestableDependency("database", "siga.ex.apids",
-		// false, 0, 10000) {
-		// @Override
-		// public String getUrl() {
-		// return SwaggerUtils.getProperty("siga.ex.api.datasource.name",
-		// "siga.ex.apids");
-		// }
-		//
-		// @Override
-		// public boolean test() throws Exception {
-		// return false;
-		// // try (Dao dao = new Dao()) {
-		// // return dao.obtemData() != null;
-		// // }
-		// }
-		//
-		// @Override
-		// public boolean isPartial() {
-		// return false;
-		// }
-		// });
-
+		addPublicProperty("sugestao.smtp.destinatario");
+		addPublicProperty("sugestao.smtp.assunto", "Siga-Le: Sugestão");
+		addPublicProperty("assijus.endpoint");
 	}
 
 	@Override
 	public int errorCode(Exception e) {
-		return e.getMessage() == null || !e.getMessage().endsWith("(Alerta)") ? super
-				.errorCode(e) : 400;
+		return e.getMessage() == null || !e.getMessage().endsWith("(Alerta)") ? super.errorCode(e) : 400;
 	}
 
 	@Override
