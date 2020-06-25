@@ -6,9 +6,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.servlet.ServletException;
-
-import org.hibernate.Query;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -27,16 +26,15 @@ public class ExDB extends ExDao implements AutoCloseable {
 	public List<DpPessoa> listarPessoas(String texto) {
 		if (texto == null || texto.trim().length() == 0)
 			return new ArrayList<>();
-		Query query = getSessao()
-				.createQuery(
+		Query query = em().createQuery(
 						"from DpPessoa pes "
 								+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
 								+ "   	and pes.dataFimPessoa = null"
 								+ "   	order by pes.nomePessoa");
 		texto = texto.replaceAll("\\s+", "%");
-		query.setString("nome", texto);
+		query.setParameter("nome", texto);
 
-		final List<DpPessoa> l = query.list();
+		final List<DpPessoa> l = query.getResultList();
 		return l;
 	}
 
@@ -44,16 +42,16 @@ public class ExDB extends ExDao implements AutoCloseable {
 	public List<DpLotacao> listarLotacoes(String texto) {
 		if (texto == null || texto.trim().length() == 0)
 			return new ArrayList<>();
-		Query query = getSessao()
+		Query query = em()
 				.createQuery(
 						"select lot from DpLotacao lot join lot.orgaoUsuario org "
 								+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (org.siglaOrgaoUsu || upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 								+ "   	and lot.dataFimLotacao = null"
 								+ "   	order by lot.nomeLotacao");
 		texto = texto.replaceAll("\\s+", "%");
-		query.setString("nome", texto);
+		query.setParameter("nome", texto);
 
-		final List<DpLotacao> l = query.list();
+		final List<DpLotacao> l = query.getResultList();
 		return l;
 	}
 
@@ -61,7 +59,7 @@ public class ExDB extends ExDao implements AutoCloseable {
 			DpLotacao lotaTitular) {
 
 		long tempoIni = System.nanoTime();
-		Query query = getSessao()
+		Query query = em()
 				.createQuery(
 						"select marca, marcador, mobil from ExMarca marca"
 								+ " inner join marca.cpMarcador marcador"
@@ -72,11 +70,11 @@ public class ExDB extends ExDao implements AutoCloseable {
 										: " and (marca.dpLotacaoIni = :lotaTitular)"));
 
 		if (titular != null)
-			query.setLong("titular", titular.getIdPessoaIni());
+			query.setParameter("titular", titular.getIdPessoaIni());
 		else if (lotaTitular != null)
-			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
+			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 
-		List l = query.list();
+		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
