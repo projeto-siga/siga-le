@@ -33,13 +33,25 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 				ExMobil mob = db.consultarPorSigla(flt);
 				ExDocumento doc = mob.doc();
 
-				DpLotacao lot = new DpLotacao();
-				lot.setSigla(req.lotacao);
-				lot = db.consultarPorSigla(lot);
+				DpLotacao lot = null;
+				if (req.lotacao != null) {
+					lot = new DpLotacao();
+					lot.setSigla(req.lotacao);
+					lot = db.consultarPorSigla(lot);
+				}
 
-				DpPessoa pes = new DpPessoa();
-				pes.setSigla(req.matricula);
-				pes = db.consultarPorSigla(pes);
+				DpPessoa pes = null;
+				if (req.matricula != null) {
+					pes = new DpPessoa();
+					pes.setSigla(req.matricula);
+					pes = db.consultarPorSigla(pes);
+					if (lot == null)
+						lot = pes.getLotacao();
+				}
+				
+				if (lot == null && pes == null) {
+					throw new PresentableUnloggedException("Deve ser informada a lotação destinatária ou a pessoa");
+				}
 
 				Utils.assertAcesso(mob, titular, lotaTitular);
 

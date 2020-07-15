@@ -66,8 +66,8 @@ public class ExDB extends ExDao implements AutoCloseable {
 								+ " inner join marca.exMobil mobil"
 								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
-										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+								+ (titular != null ? " and (marca.dpPessoaIni.idPessoa = :titular)"
+										: " and (marca.dpLotacaoIni.idLotacao = :lotaTitular)"));
 
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());

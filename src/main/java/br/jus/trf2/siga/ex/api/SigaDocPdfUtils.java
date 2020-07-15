@@ -1,6 +1,7 @@
 package br.jus.trf2.siga.ex.api;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Date;
@@ -109,8 +110,11 @@ public class SigaDocPdfUtils {
 				if (mov != null && !completo && !estampar && hash == null) {
 					ab = mov.getConteudoBlobpdf();
 				} else {
-					ab = Documento.getDocumento(mob, mov, completo, estampar,
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					Documento.getDocumento(baos, null, mob, mov, completo, estampar, false,
 							hash, null);
+					ab = baos.toByteArray();
+
 				}
 				if (ab == null) {
 					throw new Exception("PDF inválido!");
@@ -147,8 +151,10 @@ public class SigaDocPdfUtils {
 				}
 			}
 			if (isHtml) {
-				ab = Documento.getDocumentoHTML(mob, mov, completo,
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				Documento.getDocumentoHTML(baos, null, mob, mov, completo, false,
 						contextpath, servernameport);
+				ab = baos.toByteArray();
 				if (ab == null) {
 					throw new Exception("HTML inválido!");
 				}
